@@ -32,7 +32,21 @@ def analyze_file(data: bytes, name: str, threshold: float):
 
 st.title("HS FIDIC Contract Risk Analyzer")
 st.caption("Batch contract screening: sentence types and responsible-party allocation")
-st.warning("The supplied repository uses a hierarchical ensemble of two text classifiers per stage, not nine standalone models and three voting hybrids. Its bundled validation scores are not evidence of accuracy on newly uploaded contracts. The two requested Excel workbooks are not present in this repository.")
+st.warning("The supplied repository uses a hierarchical ensemble of two text classifiers per stage, not nine standalone models and three voting hybrids. Its bundled validation scores are not evidence of accuracy on newly uploaded contracts. The included Excel workbooks contain research data; evaluation scores require careful interpretation.")
+with st.expander("ML model comparison: 9 individual + 3 hybrid", expanded=True):
+    comparison_path = ROOT / "models" / "comparison_metrics.json"
+    if comparison_path.exists():
+        comparison = json.loads(comparison_path.read_text(encoding="utf-8"))
+        st.caption(comparison.get("evaluation_note", "Workbook-label evaluation only."))
+        scores = pd.DataFrame(comparison.get("results", []))
+        if not scores.empty:
+            st.dataframe(scores.sort_values("macro_f1", ascending=False), use_container_width=True, hide_index=True)
+            st.bar_chart(scores.set_index("model")[["accuracy", "macro_f1"]])
+            best = scores.sort_values("macro_f1", ascending=False).iloc[0]
+            st.info(f"Highest held-out macro-F1: {best['model']} ({best['macro_f1']:.3f}). This does not prove superiority on new contracts.")
+    else:
+        st.info("Comparison models have not been trained yet. Run `python scripts/compare_models.py` locally, then upload `models/comparison_metrics.json` to display measured results. For model selection, also upload `models/comparison_models.joblib`.")
+
 threshold = st.sidebar.slider("Manual-review confidence threshold", 0.40, 0.90, 0.60, 0.05)
 files = st.file_uploader("Upload multiple contract PDFs (DOCX and TXT also supported)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
 if not files:
