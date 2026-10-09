@@ -1,0 +1,91 @@
+{
+  "evaluation_note": "Internal 80/20 stratified split on automatically generated labels. These scores do not represent independent legal validation.",
+  "sentence_type": {
+    "accuracy": 0.9267563527653214,
+    "macro_f1": 0.6758525864653956,
+    "weighted_f1": 0.9285951568745846,
+    "classification_report": {
+      "Definition": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 19.0
+      },
+      "Heading": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 7.0
+      },
+      "Obligation": {
+        "precision": 0.9769503546099291,
+        "recall": 0.9418803418803419,
+        "f1-score": 0.959094865100087,
+        "support": 585.0
+      },
+      "Right": {
+        "precision": 0.6666666666666666,
+        "recall": 0.7692307692307693,
+        "f1-score": 0.7142857142857143,
+        "support": 26.0
+      },
+      "Risk": {
+        "precision": 0.5660377358490566,
+        "recall": 0.9375,
+        "f1-score": 0.7058823529411765,
+        "support": 32.0
+      },
+      "accuracy": 0.9267563527653214,
+      "macro avg": {
+        "precision": 0.6419309514251303,
+        "recall": 0.7297222222222223,
+        "f1-score": 0.6758525864653956,
+        "support": 669.0
+      },
+      "weighted avg": {
+        "precision": 0.9356689063188517,
+        "recall": 0.9267563527653214,
+        "f1-score": 0.9285951568745846,
+        "support": 669.0
+      }
+    }
+  },
+  "related_party": {
+    "accuracy": 0.9657853810264385,
+    "macro_f1": 0.929336738911207,
+    "weighted_f1": 0.9663166075180899,
+    "classification_report": {
+      "Contractor": {
+        "precision": 0.9371069182389937,
+        "recall": 0.9738562091503268,
+        "f1-score": 0.9551282051282052,
+        "support": 153.0
+      },
+      "Employer": {
+        "precision": 0.8163265306122449,
+        "recall": 0.8888888888888888,
+        "f1-score": 0.851063829787234,
+        "support": 45.0
+      },
+      "Shared": {
+        "precision": 0.993103448275862,
+        "recall": 0.9707865168539326,
+        "f1-score": 0.9818181818181818,
+        "support": 445.0
+      },
+      "accuracy": 0.9657853810264385,
+      "macro avg": {
+        "precision": 0.9155122990423669,
+        "recall": 0.944510538297716,
+        "f1-score": 0.929336738911207,
+        "support": 643.0
+      },
+      "weighted avg": {
+        "precision": 0.9674076000791223,
+        "recall": 0.9657853810264385,
+        "f1-score": 0.9663166075180899,
+        "support": 643.0
+      }
+    }
+  }
+}

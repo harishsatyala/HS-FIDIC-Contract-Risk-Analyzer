@@ -1,0 +1,17 @@
+{
+  "model_load_ok": true,
+  "sample_rows": 10,
+  "sample_type_counts": {
+    "Obligation": 7,
+    "Definition": 1,
+    "Right": 1,
+    "Risk": 1
+  },
+  "training_rows": 3345,
+  "metrics": {
+    "type_accuracy": 0.9267563527653214,
+    "type_macro_f1": 0.6758525864653956,
+    "party_accuracy": 0.9657853810264385,
+    "party_macro_f1": 0.929336738911207
+  }
+}
