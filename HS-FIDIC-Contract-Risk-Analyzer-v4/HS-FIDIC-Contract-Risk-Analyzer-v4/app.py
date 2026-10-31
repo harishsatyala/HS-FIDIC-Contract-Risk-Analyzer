@@ -18,6 +18,64 @@ from src import risk_engine as engine
 from src.model_zoo import HYBRID_INFO
 from src.predictor import ModelSuite
 from src.text_utils import extract_uploaded_file, segment_pages
+from src.report import build_report
+
+METHOD_MD = """
+**Pipeline.** PDF text extraction → line re-joining, header/footer removal, sentence and heading segmentation with clause
+tracking → thesis preprocessing (lower-case, punctuation/digit/stop-word removal keeping modal verbs) → **sentence-type**
+and **related-party** classification by the selected individual or hybrid model → rule layer (onerous-term triggers)
+→ risk-category assignment (FIDIC-language lexicon + clause heading + weakly-supervised ML) → risk-library match →
+scoring, mitigation and predictability.
+
+**Individual models (20).** The thesis grid (Bag-of-Words / TF-IDF / dense embedding × Logistic Regression / SVM /
+Decision Tree), extended with Multinomial & Complement Naive Bayes, SGD, Ridge, character n-gram SVM, word+char LR,
+Random Forest, Extra Trees, Histogram Gradient Boosting (LightGBM-style), k-NN and an MLP neural network.
+XGBoost / LightGBM are added automatically when installed at training time.
+
+**Hybrid models (8).** Majority vote, the thesis **Competitive Voting** (§5.6), confidence-weighted vote, rank-weighted
+vote, optimised soft voting, stacking meta-learner, **ML + rule-based stacking** (thesis §6.2 recommendation) and the
+thesis **hierarchical binary decomposition** (§5.3, Step 2).
+
+**Scores.**
+- Risk Probability L = 1 − (1 − P(Risk))·(1 − P_rule)·(1 − 0.15·P(Obligation)), where P_rule = 1 − Π(1 − wₜ) over detected triggers.
+- Allocation A = P(party = perspective) + 0.5·P(Shared).
+- Risk Score = 100·L·(0.4 + 0.6·A)·(0.6·Impact/5 + 0.4·library likelihood/0.75). Bands: ≥50 Critical, ≥30 High, ≥15 Medium.
+- Quantified risk library: Gross Exposure = TCV × exposure % of TCV; Library EMV = Gross × probability factor
+  (L 0.15 / M 0.40 / H 0.70); clause-weighted EMV = Library EMV × L; residual = EMV × (1 − mitigation effectiveness, default 35%).
+  Dashboard totals take the largest clause per category so overlapping clauses are not double-counted.
+
+**Limitations.** Training labels were auto-generated (not expert-validated); scores measure agreement with those labels.
+EMV values are screening estimates from category factors, not losses read from the contract. Risk categories are
+weakly supervised. This is decision support for bid-stage review, not legal advice.
+"""
+
+NUMBERS_GUIDE = """
+**Risk Probability %** — probability that the clause carries a contractual risk: the ML model's P(Risk) combined with
+onerous-wording triggers (e.g. *uncapped liability*, *sole discretion*, *time-bar*). It **is** a probability-style score
+(0–100%), but it is calibrated against auto-generated labels, not against real claims.
+
+**Risk Score %** — priority for review: Risk Probability × how much of the risk falls on your side (perspective) ×
+impact (1–5) and library likelihood. Bands: ≥50 ⛔ Critical, ≥30 🔶 High, ≥15 🟡 Medium, otherwise 🟢 Low.
+
+**Relevance score** (Risk-ID ranking) — the Risk Score expressed on a 0–1 scale; it ranks which clause / library risk
+deserves attention first.
+
+**Decision Strength %** — the selected model's probability for its predicted sentence type (Heading, Definition,
+Obligation, Risk, Right). It is **not** model accuracy; accuracy is in 🏆 Model performance.
+
+**Responsible Party** — allocation in the matched risk-library record. **Predicted Responsible Party** — what the
+ML party model reads in this clause (Contractor, Employer, Shared). **Party Confidence %** — that model's probability.
+
+**Predictability %** — how far the prediction can be trusted for this clause: agreement among the 20 individual models,
+confidence, entropy and the model's historical precision. Below the review threshold → expert review.
+
+**Probability (L/M/H) & Probability Factor** — qualitative likelihood from the matched risk-library record and its
+screening factor: **Low = 0.15, Medium = 0.40, High = 0.70**.
+
+**Gross Exposure** — TCV × the record's exposure % of TCV. **Library EMV** = Gross Exposure × Probability Factor.
+**EMV (clause-weighted)** = Library EMV × Risk Probability. **Residual EMV** = EMV × (1 − mitigation effectiveness).
+Totals take the largest clause per category to avoid double counting; they are screening estimates, not contract losses.
+"""
 
 ROOT = Path(__file__).resolve().parent
 MODELS = ROOT / "models"
@@ -221,37 +279,30 @@ def make_register(d):
 reg = make_register(df)
 summ = engine.contract_summary(df, reg)
 
+rc1, rc2 = st.columns([1, 3])
+if rc1.button("📑 Generate full report", type="primary",
+              help="One HTML file with every tab's analysis, explanations, charts and tables. Open in a browser; "
+                   "print to PDF if needed."):
+    with st.spinner("Building the report with all charts and tables…"):
+        st.session_state["report"] = (sel, build_report(
+            sel=sel, df=df, reg=reg, summ=summ, info=info, votes=votes, suite=suite, metrics=metrics,
+            settings=dict(type_model=type_model, party_model=party_model, perspective=perspective, min_prob=min_prob,
+                          review_thr=review_thr, value=value, mit_pct=mit_pct, context=ctx),
+            results=results, make_register=make_register, numbers_guide=NUMBERS_GUIDE, method_md=METHOD_MD,
+            currency=cur))
+if st.session_state.get("report") and st.session_state["report"][0] == sel:
+    rc2.download_button("⬇️ Download report (HTML — open in browser, print to PDF)",
+                        st.session_state["report"][1].encode("utf-8"),
+                        f"{Path(sel).stem}_HS-FIDIC_full_report.html", "text/html")
+else:
+    rc2.caption("Creates one report covering Risk dashboard, Mitigation plans, Model execution, Predictability, "
+                "Model performance, Clause explorer, Compare contracts and Method — with explanations and all charts.")
+
 tabs = st.tabs(["📊 Risk dashboard", "🛡️ Mitigation plans", "🤖 Model execution", "🎯 Predictability",
                 "🏆 Model performance", "📄 Clause explorer", "⚖️ Compare contracts", "ℹ️ Method"])
 
 # ============================================================================= 1 DASHBOARD
-NUMBERS_GUIDE = """
-**Risk Probability %** — probability that the clause carries a contractual risk: the ML model's P(Risk) combined with
-onerous-wording triggers (e.g. *uncapped liability*, *sole discretion*, *time-bar*). It **is** a probability-style score
-(0–100%), but it is calibrated against auto-generated labels, not against real claims.
 
-**Risk Score %** — priority for review: Risk Probability × how much of the risk falls on your side (perspective) ×
-impact (1–5) and library likelihood. Bands: ≥50 ⛔ Critical, ≥30 🔶 High, ≥15 🟡 Medium, otherwise 🟢 Low.
-
-**Relevance score** (Risk-ID ranking) — the Risk Score expressed on a 0–1 scale; it ranks which clause / library risk
-deserves attention first.
-
-**Decision Strength %** — the selected model's probability for its predicted sentence type (Heading, Definition,
-Obligation, Risk, Right). It is **not** model accuracy; accuracy is in 🏆 Model performance.
-
-**Responsible Party** — allocation in the matched risk-library record. **Predicted Responsible Party** — what the
-ML party model reads in this clause (Contractor, Employer, Shared). **Party Confidence %** — that model's probability.
-
-**Predictability %** — how far the prediction can be trusted for this clause: agreement among the 20 individual models,
-confidence, entropy and the model's historical precision. Below the review threshold → expert review.
-
-**Probability (L/M/H) & Probability Factor** — qualitative likelihood from the matched risk-library record and its
-screening factor: **Low = 0.15, Medium = 0.40, High = 0.70**.
-
-**Gross Exposure** — TCV × the record's exposure % of TCV. **Library EMV** = Gross Exposure × Probability Factor.
-**EMV (clause-weighted)** = Library EMV × Risk Probability. **Residual EMV** = EMV × (1 − mitigation effectiveness).
-Totals take the largest clause per category to avoid double counting; they are screening estimates, not contract losses.
-"""
 
 with tabs[0]:
     st.subheader("📊 Risk Analysis Summary")
@@ -518,12 +569,15 @@ with tabs[4]:
         ind, hyb = pf[pf["Type"] == "Individual"], pf[pf["Type"] == "Hybrid"]
         bi, bh = ind.iloc[0], hyb.iloc[0]
         k = st.columns(5)
-        k[0].metric("Models compared", f"{len(ind)} + {len(hyb)}", "individual + hybrid", delta_color="off")
-        k[1].metric("Best individual (Macro-F1)", f"{bi['Macro-F1']:.1f}%", bi["Model"][:30], delta_color="off")
-        k[2].metric("Best hybrid (Macro-F1)", f"{bh['Macro-F1']:.1f}%", bh["Model"].replace("Hybrid: ", "")[:30], delta_color="off")
-        k[3].metric("Hybrid gain over best individual", f"{bh['Macro-F1'] - bi['Macro-F1']:+.1f} pts", "Macro-F1", delta_color="off")
+        kp = [("Models compared", f"{len(ind)} + {len(hyb)}", "individual + hybrid"),
+              ("Best individual (Macro-F1)", f"{bi['Macro-F1']:.1f}%", bi["Model"]),
+              ("Best hybrid (Macro-F1)", f"{bh['Macro-F1']:.1f}%", bh["Model"].replace("Hybrid: ", "")),
+              ("Hybrid gain over best individual", f"{bh['Macro-F1'] - bi['Macro-F1']:+.1f} pts", "Macro-F1 points")]
         dm = pf.set_index("Model").loc[m["default_model"]]
-        k[4].metric("Deployed default", f"{dm['Accuracy']:.1f}% acc", m["default_model"].replace("Hybrid: ", "")[:30], delta_color="off")
+        kp.append(("Deployed default (accuracy)", f"{dm['Accuracy']:.1f}%", m["default_model"].replace("Hybrid: ", "")))
+        for col, (lab, val, sub) in zip(k, kp):
+            col.metric(lab, val)
+            col.caption(sub)
         st.caption(f"Test set: {m['n_test']} sentences · development set: {m['n_dev']} sentences (5-fold CV) · "
                    "the default model is chosen by cross-validated Macro-F1, not by the test scores below.")
 
@@ -631,32 +685,6 @@ with tabs[6]:
 # ============================================================================= 7 METHOD
 with tabs[7]:
     st.subheader("Method")
-    st.markdown("""
-**Pipeline.** PDF text extraction → line re-joining, header/footer removal, sentence and heading segmentation with clause
-tracking → thesis preprocessing (lower-case, punctuation/digit/stop-word removal keeping modal verbs) → **sentence-type**
-and **related-party** classification by the selected individual or hybrid model → rule layer (onerous-term triggers)
-→ risk-category assignment (FIDIC-language lexicon + clause heading + weakly-supervised ML) → risk-library match →
-scoring, mitigation and predictability.
+    st.markdown(METHOD_MD)
 
-**Individual models (20).** The thesis grid (Bag-of-Words / TF-IDF / dense embedding × Logistic Regression / SVM /
-Decision Tree), extended with Multinomial & Complement Naive Bayes, SGD, Ridge, character n-gram SVM, word+char LR,
-Random Forest, Extra Trees, Histogram Gradient Boosting (LightGBM-style), k-NN and an MLP neural network.
-XGBoost / LightGBM are added automatically when installed at training time.
-
-**Hybrid models (8).** Majority vote, the thesis **Competitive Voting** (§5.6), confidence-weighted vote, rank-weighted
-vote, optimised soft voting, stacking meta-learner, **ML + rule-based stacking** (thesis §6.2 recommendation) and the
-thesis **hierarchical binary decomposition** (§5.3, Step 2).
-
-**Scores.**
-- Risk Probability L = 1 − (1 − P(Risk))·(1 − P_rule)·(1 − 0.15·P(Obligation)), where P_rule = 1 − Π(1 − wₜ) over detected triggers.
-- Allocation A = P(party = perspective) + 0.5·P(Shared).
-- Risk Score = 100·L·(0.4 + 0.6·A)·(0.6·Impact/5 + 0.4·library likelihood/0.75). Bands: ≥50 Critical, ≥30 High, ≥15 Medium.
-- Quantified risk library: Gross Exposure = TCV × exposure % of TCV; Library EMV = Gross × probability factor
-  (L 0.15 / M 0.40 / H 0.70); clause-weighted EMV = Library EMV × L; residual = EMV × (1 − mitigation effectiveness, default 35%).
-  Dashboard totals take the largest clause per category so overlapping clauses are not double-counted.
-
-**Limitations.** Training labels were auto-generated (not expert-validated); scores measure agreement with those labels.
-EMV values are screening estimates from category factors, not losses read from the contract. Risk categories are
-weakly supervised. This is decision support for bid-stage review, not legal advice.
-""")
 st.caption("HS-FIDIC research prototype · decision support only, not legal advice · thesis basis: Eken (2022), METU.")
