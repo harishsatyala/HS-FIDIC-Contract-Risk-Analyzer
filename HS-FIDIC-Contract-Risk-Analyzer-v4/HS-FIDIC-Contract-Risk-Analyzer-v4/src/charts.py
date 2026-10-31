@@ -17,10 +17,12 @@ GRID = "#e6e5e1"
 
 def _style(fig, height=360, legend=True):
     fig.update_layout(
-        template="plotly_white", height=height, margin=dict(l=10, r=10, t=40, b=10),
+        template="plotly_white", height=height, margin=dict(l=10, r=10, t=78 if legend else 48, b=10),
         font=dict(family="Inter, Segoe UI, sans-serif", size=12, color=TEXT),
         title_font=dict(size=14, color="#0b0b0b"), showlegend=legend, bargap=0.25,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, title_text=""),
+        legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0, title_text=""),
+        title=dict(y=0.985, yanchor="top", x=0.01, xanchor="left"),
+        modebar=dict(orientation="v"),
         hoverlabel=dict(bgcolor="white", font_size=12),
     )
     fig.update_xaxes(gridcolor=GRID, zeroline=False)
@@ -278,8 +280,9 @@ def perf_heatmap(pf: pd.DataFrame, title):
         hovertemplate="%{y}<br>%{x}: %{z:.2f}%<extra></extra>", colorbar=dict(title="%", thickness=10)))
     fig.update_xaxes(side="top", showgrid=False)
     fig.update_yaxes(showgrid=False)
-    return _style(fig, max(460, 24 * len(d) + 110), legend=False).update_layout(
-        title=title + "  (◆ = hybrid; darker = better)")
+    fig = _style(fig, max(480, 24 * len(d) + 140), legend=False)
+    return fig.update_layout(title=dict(text=title + "  (◆ = hybrid; darker = better)", y=0.995, yanchor="top"),
+                             margin=dict(t=110))
 
 
 def perf_grouped(pf: pd.DataFrame, models, title):
