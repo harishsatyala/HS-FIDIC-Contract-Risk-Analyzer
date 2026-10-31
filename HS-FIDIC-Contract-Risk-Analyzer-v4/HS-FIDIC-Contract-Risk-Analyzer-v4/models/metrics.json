@@ -1,0 +1,6831 @@
+{
+ "evaluation_protocol": "Stratified 80/20 DEV/TEST split (seed 42). 5-fold stratified CV on DEV gives out-of-fold probabilities used to rank models, tune hybrid weights and fit stacking meta-learners. TEST is used once for the reported scores; 95% CIs by 600 bootstrap resamples. Default model = hybrid with best DEV-CV macro-F1 (never selected on TEST).",
+ "caveats": [
+  "Workbook labels were generated automatically, not by FIDIC experts: scores measure agreement with those labels, not legal correctness.",
+  "OCR noise (ORANGE/SILVER books) and Indonesian rows were removed; RED and YELLOW books share many near-identical clauses, which can inflate scores.",
+  "Heading augmentation (sub-clause titles harvested from cross-references) is used for training only, never in TEST."
+ ],
+ "data_audit": {
+  "raw_rows": 3345,
+  "kept_rows": 1304,
+  "dropped_total": 2041,
+  "dropped_line_fragments": 584,
+  "relabelled_as_heading": 254,
+  "type_distribution": {
+   "Obligation": 810,
+   "Heading": 257,
+   "Risk": 96,
+   "Definition": 72,
+   "Right": 69
+  },
+  "party_distribution": {
+   "Shared": 449,
+   "Contractor": 419,
+   "Employer": 107
+  }
+ },
+ "heading_augmentation_rows": 100,
+ "sentence_type": {
+  "labels": [
+   "Definition",
+   "Heading",
+   "Obligation",
+   "Right",
+   "Risk"
+  ],
+  "n_dev": 1043,
+  "n_test": 261,
+  "default_model": "Hybrid: Stacking Meta-Learner (All models)",
+  "best_individual": "BoW + Logistic Regression",
+  "results": [
+   {
+    "model": "BoW + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.81736,
+    "cv_macro_f1_std": 0.02415,
+    "train_seconds": 0.55,
+    "accuracy": 0.85441,
+    "macro_precision": 0.84694,
+    "macro_recall": 0.8634,
+    "macro_f1": 0.84748,
+    "macro_f1_ci95": [
+     0.7889,
+     0.8922
+    ],
+    "weighted_f1": 0.85735,
+    "roc_auc_ovr": 0.9742,
+    "log_loss": 0.38387,
+    "brier": 0.21265,
+    "ece": 0.06492,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6806,
+      "recall": 0.9423,
+      "f1": 0.7903,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9375,
+      "recall": 0.8333,
+      "f1": 0.8824,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.75,
+      "recall": 0.8571,
+      "f1": 0.8,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8667,
+      "recall": 0.6842,
+      "f1": 0.7647,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      22,
+      135,
+      4,
+      1
+     ],
+     [
+      0,
+      1,
+      0,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      0,
+      13
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3818,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4865,
+      "accuracy": 0.0,
+      "count": 3
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5439,
+      "accuracy": 0.4,
+      "count": 10
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6466,
+      "accuracy": 0.6,
+      "count": 10
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7584,
+      "accuracy": 0.6154,
+      "count": 13
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8676,
+      "accuracy": 0.7273,
+      "count": 33
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9763,
+      "accuracy": 0.9424,
+      "count": 191
+     }
+    ],
+    "inference_ms_per_1000": 32.95
+   },
+   {
+    "model": "BoW + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.80473,
+    "cv_macro_f1_std": 0.02738,
+    "train_seconds": 0.61,
+    "accuracy": 0.84674,
+    "macro_precision": 0.88022,
+    "macro_recall": 0.82115,
+    "macro_f1": 0.83325,
+    "macro_f1_ci95": [
+     0.7657,
+     0.8794
+    ],
+    "weighted_f1": 0.84585,
+    "roc_auc_ovr": 0.97178,
+    "log_loss": 0.37938,
+    "brier": 0.21773,
+    "ece": 0.05266,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6761,
+      "recall": 0.9231,
+      "f1": 0.7805,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.902,
+      "recall": 0.8519,
+      "f1": 0.8762,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.9,
+      "recall": 0.4737,
+      "f1": 0.6207,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      48,
+      4,
+      0,
+      0
+     ],
+     [
+      0,
+      23,
+      138,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      10,
+      0,
+      9
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4764,
+      "accuracy": 0.3333,
+      "count": 6
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5527,
+      "accuracy": 0.4783,
+      "count": 23
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.652,
+      "accuracy": 0.7692,
+      "count": 26
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7564,
+      "accuracy": 0.803,
+      "count": 66
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8495,
+      "accuracy": 0.8649,
+      "count": 37
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9565,
+      "accuracy": 1.0,
+      "count": 103
+     }
+    ],
+    "inference_ms_per_1000": 39.75
+   },
+   {
+    "model": "BoW + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.79153,
+    "cv_macro_f1_std": 0.0489,
+    "train_seconds": 0.41,
+    "accuracy": 0.83142,
+    "macro_precision": 0.78641,
+    "macro_recall": 0.85453,
+    "macro_f1": 0.81508,
+    "macro_f1_ci95": [
+     0.757,
+     0.8631
+    ],
+    "weighted_f1": 0.83523,
+    "roc_auc_ovr": 0.9104,
+    "log_loss": 1.60145,
+    "brier": 0.28203,
+    "ece": 0.13912,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7231,
+      "recall": 0.9038,
+      "f1": 0.8034,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9225,
+      "recall": 0.8086,
+      "f1": 0.8618,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.7647,
+      "recall": 0.9286,
+      "f1": 0.8387,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.5217,
+      "recall": 0.6316,
+      "f1": 0.5714,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      47,
+      5,
+      0,
+      0
+     ],
+     [
+      0,
+      18,
+      131,
+      3,
+      10
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      1,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5151,
+      "accuracy": 0.5,
+      "count": 4
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6717,
+      "accuracy": 0.2857,
+      "count": 7
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8477,
+      "accuracy": 0.2778,
+      "count": 18
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9969,
+      "accuracy": 0.8966,
+      "count": 232
+     }
+    ],
+    "inference_ms_per_1000": 32.95
+   },
+   {
+    "model": "TF-IDF + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.79394,
+    "cv_macro_f1_std": 0.02981,
+    "train_seconds": 0.65,
+    "accuracy": 0.85057,
+    "macro_precision": 0.82909,
+    "macro_recall": 0.86508,
+    "macro_f1": 0.84419,
+    "macro_f1_ci95": [
+     0.7859,
+     0.8933
+    ],
+    "weighted_f1": 0.85277,
+    "roc_auc_ovr": 0.96573,
+    "log_loss": 0.45149,
+    "brier": 0.23049,
+    "ece": 0.08028,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9286,
+      "recall": 0.9286,
+      "f1": 0.9286,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7049,
+      "recall": 0.8269,
+      "f1": 0.7611,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9139,
+      "recall": 0.8519,
+      "f1": 0.8818,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.7647,
+      "recall": 0.9286,
+      "f1": 0.8387,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8333,
+      "recall": 0.7895,
+      "f1": 0.8108,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      13,
+      0,
+      0,
+      0,
+      1
+     ],
+     [
+      0,
+      43,
+      9,
+      0,
+      0
+     ],
+     [
+      1,
+      18,
+      138,
+      4,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      4,
+      0,
+      15
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.461,
+      "accuracy": 0.4667,
+      "count": 15
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5466,
+      "accuracy": 0.6552,
+      "count": 29
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6442,
+      "accuracy": 0.8205,
+      "count": 39
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7511,
+      "accuracy": 0.766,
+      "count": 47
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8463,
+      "accuracy": 0.9508,
+      "count": 61
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9462,
+      "accuracy": 1.0,
+      "count": 70
+     }
+    ],
+    "inference_ms_per_1000": 28.95
+   },
+   {
+    "model": "TF-IDF + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.78644,
+    "cv_macro_f1_std": 0.03289,
+    "train_seconds": 0.55,
+    "accuracy": 0.83908,
+    "macro_precision": 0.85404,
+    "macro_recall": 0.77952,
+    "macro_f1": 0.80269,
+    "macro_f1_ci95": [
+     0.7302,
+     0.8597
+    ],
+    "weighted_f1": 0.83593,
+    "roc_auc_ovr": 0.96474,
+    "log_loss": 0.42522,
+    "brier": 0.23301,
+    "ece": 0.04275,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9286,
+      "recall": 0.9286,
+      "f1": 0.9286,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7288,
+      "recall": 0.8269,
+      "f1": 0.7748,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8667,
+      "recall": 0.8827,
+      "f1": 0.8746,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8462,
+      "recall": 0.7857,
+      "f1": 0.8148,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.9,
+      "recall": 0.4737,
+      "f1": 0.6207,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      13,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      43,
+      9,
+      0,
+      0
+     ],
+     [
+      1,
+      16,
+      143,
+      2,
+      0
+     ],
+     [
+      0,
+      0,
+      2,
+      11,
+      1
+     ],
+     [
+      0,
+      0,
+      10,
+      0,
+      9
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3766,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4763,
+      "accuracy": 0.4,
+      "count": 5
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5516,
+      "accuracy": 0.5882,
+      "count": 34
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6535,
+      "accuracy": 0.6897,
+      "count": 29
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7547,
+      "accuracy": 0.8205,
+      "count": 39
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8523,
+      "accuracy": 0.8571,
+      "count": 56
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9456,
+      "accuracy": 1.0,
+      "count": 97
+     }
+    ],
+    "inference_ms_per_1000": 38.85
+   },
+   {
+    "model": "TF-IDF + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.78833,
+    "cv_macro_f1_std": 0.03433,
+    "train_seconds": 0.41,
+    "accuracy": 0.86207,
+    "macro_precision": 0.82649,
+    "macro_recall": 0.86702,
+    "macro_f1": 0.84433,
+    "macro_f1_ci95": [
+     0.788,
+     0.8924
+    ],
+    "weighted_f1": 0.86434,
+    "roc_auc_ovr": 0.91241,
+    "log_loss": 1.80556,
+    "brier": 0.26471,
+    "ece": 0.12987,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7619,
+      "recall": 0.9231,
+      "f1": 0.8348,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9324,
+      "recall": 0.8519,
+      "f1": 0.8903,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8667,
+      "recall": 0.9286,
+      "f1": 0.8966,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.5714,
+      "recall": 0.6316,
+      "f1": 0.6,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      48,
+      4,
+      0,
+      0
+     ],
+     [
+      0,
+      15,
+      138,
+      1,
+      8
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      1,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5151,
+      "accuracy": 0.6667,
+      "count": 3
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.68,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8685,
+      "accuracy": 0.4,
+      "count": 10
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9977,
+      "accuracy": 0.8826,
+      "count": 247
+     }
+    ],
+    "inference_ms_per_1000": 33.63
+   },
+   {
+    "model": "LSA Embedding + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.75352,
+    "cv_macro_f1_std": 0.02779,
+    "train_seconds": 1.0,
+    "accuracy": 0.83908,
+    "macro_precision": 0.78054,
+    "macro_recall": 0.8643,
+    "macro_f1": 0.81237,
+    "macro_f1_ci95": [
+     0.746,
+     0.8651
+    ],
+    "weighted_f1": 0.84312,
+    "roc_auc_ovr": 0.96853,
+    "log_loss": 0.44865,
+    "brier": 0.24355,
+    "ece": 0.03328,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7636,
+      "recall": 0.8077,
+      "f1": 0.785,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9247,
+      "recall": 0.8333,
+      "f1": 0.8766,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.6842,
+      "recall": 0.9286,
+      "f1": 0.7879,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.6071,
+      "recall": 0.8947,
+      "f1": 0.7234,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      42,
+      8,
+      1,
+      1
+     ],
+     [
+      1,
+      13,
+      135,
+      5,
+      8
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      2,
+      0,
+      17
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3951,
+      "accuracy": 0.5,
+      "count": 2
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4605,
+      "accuracy": 0.625,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5576,
+      "accuracy": 0.5714,
+      "count": 21
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6448,
+      "accuracy": 0.72,
+      "count": 25
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7514,
+      "accuracy": 0.6667,
+      "count": 27
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8504,
+      "accuracy": 0.8182,
+      "count": 55
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.968,
+      "accuracy": 0.9756,
+      "count": 123
+     }
+    ],
+    "inference_ms_per_1000": 40.75
+   },
+   {
+    "model": "LSA Embedding + RBF SVM",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Support Vector Machine (RBF)",
+    "family": "Margin",
+    "cv_macro_f1": 0.73766,
+    "cv_macro_f1_std": 0.03276,
+    "train_seconds": 2.29,
+    "accuracy": 0.8659,
+    "macro_precision": 0.86432,
+    "macro_recall": 0.82011,
+    "macro_f1": 0.83978,
+    "macro_f1_ci95": [
+     0.7748,
+     0.8943
+    ],
+    "weighted_f1": 0.86485,
+    "roc_auc_ovr": 0.941,
+    "log_loss": 0.49715,
+    "brier": 0.24472,
+    "ece": 0.04595,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7885,
+      "recall": 0.7885,
+      "f1": 0.7885,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8862,
+      "recall": 0.9136,
+      "f1": 0.8997,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8667,
+      "recall": 0.6842,
+      "f1": 0.7647,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      41,
+      11,
+      0,
+      0
+     ],
+     [
+      1,
+      11,
+      148,
+      2,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      0,
+      13
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.65,
+      "confidence": 0.6856,
+      "accuracy": 0.8889,
+      "count": 9
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7612,
+      "accuracy": 0.8358,
+      "count": 67
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.838,
+      "accuracy": 0.8571,
+      "count": 161
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9133,
+      "accuracy": 1.0,
+      "count": 24
+     }
+    ],
+    "inference_ms_per_1000": 122.13
+   },
+   {
+    "model": "LSA Embedding + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.4693,
+    "cv_macro_f1_std": 0.02119,
+    "train_seconds": 1.22,
+    "accuracy": 0.69732,
+    "macro_precision": 0.5196,
+    "macro_recall": 0.54037,
+    "macro_f1": 0.52852,
+    "macro_f1_ci95": [
+     0.4334,
+     0.5999
+    ],
+    "weighted_f1": 0.70136,
+    "roc_auc_ovr": 0.74832,
+    "log_loss": 4.57039,
+    "brier": 0.55343,
+    "ece": 0.27489,
+    "per_class": {
+     "Definition": {
+      "precision": 0.1765,
+      "recall": 0.2143,
+      "f1": 0.1935,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7736,
+      "recall": 0.7885,
+      "f1": 0.781,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.7885,
+      "recall": 0.7593,
+      "f1": 0.7736,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.4706,
+      "recall": 0.5714,
+      "f1": 0.5161,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.3889,
+      "recall": 0.3684,
+      "f1": 0.3784,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      3,
+      0,
+      11,
+      0,
+      0
+     ],
+     [
+      1,
+      41,
+      10,
+      0,
+      0
+     ],
+     [
+      11,
+      12,
+      123,
+      8,
+      8
+     ],
+     [
+      0,
+      0,
+      3,
+      8,
+      3
+     ],
+     [
+      2,
+      0,
+      9,
+      1,
+      7
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5151,
+      "accuracy": 0.625,
+      "count": 8
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6918,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7728,
+      "accuracy": 0.3333,
+      "count": 6
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.841,
+      "accuracy": 0.25,
+      "count": 20
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9988,
+      "accuracy": 0.7522,
+      "count": 226
+     }
+    ],
+    "inference_ms_per_1000": 37.9
+   },
+   {
+    "model": "BoW + Multinomial Naive Bayes",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Multinomial Naive Bayes",
+    "family": "Probabilistic",
+    "cv_macro_f1": 0.58236,
+    "cv_macro_f1_std": 0.03817,
+    "train_seconds": 0.28,
+    "accuracy": 0.76628,
+    "macro_precision": 0.7366,
+    "macro_recall": 0.69954,
+    "macro_f1": 0.68696,
+    "macro_f1_ci95": [
+     0.6065,
+     0.753
+    ],
+    "weighted_f1": 0.74134,
+    "roc_auc_ovr": 0.91361,
+    "log_loss": 1.21041,
+    "brier": 0.33366,
+    "ece": 0.14039,
+    "per_class": {
+     "Definition": {
+      "precision": 0.7059,
+      "recall": 0.8571,
+      "f1": 0.7742,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7895,
+      "recall": 0.2885,
+      "f1": 0.4225,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.7926,
+      "recall": 0.9198,
+      "f1": 0.8514,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8182,
+      "recall": 0.6429,
+      "f1": 0.72,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.5769,
+      "recall": 0.7895,
+      "f1": 0.6667,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      3,
+      15,
+      31,
+      1,
+      2
+     ],
+     [
+      1,
+      4,
+      149,
+      1,
+      7
+     ],
+     [
+      1,
+      0,
+      3,
+      9,
+      1
+     ],
+     [
+      0,
+      0,
+      4,
+      0,
+      15
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3608,
+      "accuracy": 0.3333,
+      "count": 3
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4692,
+      "accuracy": 0.125,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.566,
+      "accuracy": 0.1538,
+      "count": 13
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6506,
+      "accuracy": 0.4706,
+      "count": 17
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7414,
+      "accuracy": 0.3,
+      "count": 10
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8654,
+      "accuracy": 0.6471,
+      "count": 17
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.991,
+      "accuracy": 0.9016,
+      "count": 193
+     }
+    ],
+    "inference_ms_per_1000": 27.16
+   },
+   {
+    "model": "TF-IDF + Complement Naive Bayes",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Complement Naive Bayes",
+    "family": "Probabilistic",
+    "cv_macro_f1": 0.55893,
+    "cv_macro_f1_std": 0.03722,
+    "train_seconds": 0.29,
+    "accuracy": 0.7433,
+    "macro_precision": 0.64815,
+    "macro_recall": 0.66573,
+    "macro_f1": 0.64815,
+    "macro_f1_ci95": [
+     0.5619,
+     0.719
+    ],
+    "weighted_f1": 0.73332,
+    "roc_auc_ovr": 0.89706,
+    "log_loss": 1.01512,
+    "brier": 0.48801,
+    "ece": 0.27587,
+    "per_class": {
+     "Definition": {
+      "precision": 0.6316,
+      "recall": 0.8571,
+      "f1": 0.7273,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6471,
+      "recall": 0.4231,
+      "f1": 0.5116,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8046,
+      "recall": 0.8642,
+      "f1": 0.8333,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.5385,
+      "recall": 0.5,
+      "f1": 0.5185,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.619,
+      "recall": 0.6842,
+      "f1": 0.65,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      2,
+      0,
+      0
+     ],
+     [
+      5,
+      22,
+      22,
+      1,
+      2
+     ],
+     [
+      2,
+      10,
+      140,
+      5,
+      5
+     ],
+     [
+      0,
+      1,
+      5,
+      7,
+      1
+     ],
+     [
+      0,
+      1,
+      5,
+      0,
+      13
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.15,
+      "confidence": 0.2,
+      "accuracy": 0.0,
+      "count": 3
+     },
+     {
+      "bin": 0.25,
+      "confidence": 0.2596,
+      "accuracy": 0.4717,
+      "count": 53
+     },
+     {
+      "bin": 0.35,
+      "confidence": 0.3439,
+      "accuracy": 0.6296,
+      "count": 54
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4466,
+      "accuracy": 0.8519,
+      "count": 54
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5414,
+      "accuracy": 0.9,
+      "count": 30
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.659,
+      "accuracy": 0.8621,
+      "count": 29
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7536,
+      "accuracy": 0.9545,
+      "count": 22
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8378,
+      "accuracy": 1.0,
+      "count": 9
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9535,
+      "accuracy": 1.0,
+      "count": 7
+     }
+    ],
+    "inference_ms_per_1000": 34.66
+   },
+   {
+    "model": "TF-IDF + SGD (log-loss)",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Stochastic Gradient Descent",
+    "family": "Linear",
+    "cv_macro_f1": 0.76556,
+    "cv_macro_f1_std": 0.0387,
+    "train_seconds": 0.29,
+    "accuracy": 0.85057,
+    "macro_precision": 0.85169,
+    "macro_recall": 0.81893,
+    "macro_f1": 0.83168,
+    "macro_f1_ci95": [
+     0.7652,
+     0.8825
+    ],
+    "weighted_f1": 0.85003,
+    "roc_auc_ovr": 0.96031,
+    "log_loss": 0.44718,
+    "brier": 0.23826,
+    "ece": 0.05444,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9286,
+      "recall": 0.9286,
+      "f1": 0.9286,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7321,
+      "recall": 0.7885,
+      "f1": 0.7593,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8834,
+      "recall": 0.8889,
+      "f1": 0.8862,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8571,
+      "recall": 0.6316,
+      "f1": 0.7273,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      13,
+      0,
+      0,
+      0,
+      1
+     ],
+     [
+      0,
+      41,
+      11,
+      0,
+      0
+     ],
+     [
+      1,
+      15,
+      144,
+      2,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      7,
+      0,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4732,
+      "accuracy": 0.5714,
+      "count": 7
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5499,
+      "accuracy": 0.6538,
+      "count": 26
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.638,
+      "accuracy": 0.8261,
+      "count": 23
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7529,
+      "accuracy": 0.6842,
+      "count": 38
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8529,
+      "accuracy": 0.85,
+      "count": 60
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9466,
+      "accuracy": 0.9813,
+      "count": 107
+     }
+    ],
+    "inference_ms_per_1000": 29.81
+   },
+   {
+    "model": "TF-IDF + Ridge Classifier",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Ridge Classifier",
+    "family": "Linear",
+    "cv_macro_f1": 0.79656,
+    "cv_macro_f1_std": 0.02347,
+    "train_seconds": 0.63,
+    "accuracy": 0.86207,
+    "macro_precision": 0.85313,
+    "macro_recall": 0.8502,
+    "macro_f1": 0.84667,
+    "macro_f1_ci95": [
+     0.7834,
+     0.8946
+    ],
+    "weighted_f1": 0.86226,
+    "roc_auc_ovr": 0.96802,
+    "log_loss": 0.40753,
+    "brier": 0.22085,
+    "ece": 0.07068,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9333,
+      "recall": 1.0,
+      "f1": 0.9655,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7544,
+      "recall": 0.8269,
+      "f1": 0.789,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8994,
+      "recall": 0.8827,
+      "f1": 0.891,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.75,
+      "recall": 0.8571,
+      "f1": 0.8,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.9286,
+      "recall": 0.6842,
+      "f1": 0.7879,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      43,
+      9,
+      0,
+      0
+     ],
+     [
+      1,
+      14,
+      143,
+      4,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      0,
+      13
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3732,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4802,
+      "accuracy": 0.875,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5577,
+      "accuracy": 0.6061,
+      "count": 33
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6446,
+      "accuracy": 0.6471,
+      "count": 34
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7571,
+      "accuracy": 0.9211,
+      "count": 38
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8547,
+      "accuracy": 0.8814,
+      "count": 59
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9412,
+      "accuracy": 1.0,
+      "count": 88
+     }
+    ],
+    "inference_ms_per_1000": 43.45
+   },
+   {
+    "model": "Char n-gram + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "Character n-gram TF-IDF",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.75065,
+    "cv_macro_f1_std": 0.03311,
+    "train_seconds": 2.44,
+    "accuracy": 0.88123,
+    "macro_precision": 0.88796,
+    "macro_recall": 0.80648,
+    "macro_f1": 0.83453,
+    "macro_f1_ci95": [
+     0.7644,
+     0.8921
+    ],
+    "weighted_f1": 0.87909,
+    "roc_auc_ovr": 0.97977,
+    "log_loss": 0.35858,
+    "brier": 0.18888,
+    "ece": 0.07475,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7727,
+      "recall": 0.9808,
+      "f1": 0.8644,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9182,
+      "recall": 0.9012,
+      "f1": 0.9097,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.9091,
+      "recall": 0.7143,
+      "f1": 0.8,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.9167,
+      "recall": 0.5789,
+      "f1": 0.7097,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      2,
+      0,
+      0
+     ],
+     [
+      1,
+      51,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      15,
+      146,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      3,
+      10,
+      1
+     ],
+     [
+      0,
+      0,
+      8,
+      0,
+      11
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3932,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4723,
+      "accuracy": 0.2857,
+      "count": 7
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5364,
+      "accuracy": 0.7368,
+      "count": 19
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.647,
+      "accuracy": 0.7059,
+      "count": 17
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7491,
+      "accuracy": 0.6562,
+      "count": 32
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8529,
+      "accuracy": 0.9434,
+      "count": 53
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9468,
+      "accuracy": 0.9848,
+      "count": 132
+     }
+    ],
+    "inference_ms_per_1000": 207.85
+   },
+   {
+    "model": "Word+Char TF-IDF + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "Word + character TF-IDF",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.81715,
+    "cv_macro_f1_std": 0.0272,
+    "train_seconds": 3.96,
+    "accuracy": 0.87739,
+    "macro_precision": 0.84839,
+    "macro_recall": 0.85024,
+    "macro_f1": 0.84694,
+    "macro_f1_ci95": [
+     0.7721,
+     0.8957
+    ],
+    "weighted_f1": 0.87856,
+    "roc_auc_ovr": 0.97826,
+    "log_loss": 0.34998,
+    "brier": 0.17728,
+    "ece": 0.03779,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7656,
+      "recall": 0.9423,
+      "f1": 0.8448,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9342,
+      "recall": 0.8765,
+      "f1": 0.9045,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.7857,
+      "recall": 0.7857,
+      "f1": 0.7857,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8333,
+      "recall": 0.7895,
+      "f1": 0.8108,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      1,
+      15,
+      142,
+      3,
+      1
+     ],
+     [
+      0,
+      0,
+      2,
+      11,
+      1
+     ],
+     [
+      0,
+      0,
+      4,
+      0,
+      15
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4587,
+      "accuracy": 0.4667,
+      "count": 15
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.534,
+      "accuracy": 0.5,
+      "count": 14
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6624,
+      "accuracy": 0.7059,
+      "count": 17
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7617,
+      "accuracy": 0.8889,
+      "count": 27
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8557,
+      "accuracy": 0.8654,
+      "count": 52
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9515,
+      "accuracy": 0.9853,
+      "count": 136
+     }
+    ],
+    "inference_ms_per_1000": 274.75
+   },
+   {
+    "model": "TF-IDF + Random Forest",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Random Forest",
+    "family": "Ensemble tree",
+    "cv_macro_f1": 0.69098,
+    "cv_macro_f1_std": 0.04249,
+    "train_seconds": 3.68,
+    "accuracy": 0.84291,
+    "macro_precision": 0.88067,
+    "macro_recall": 0.76103,
+    "macro_f1": 0.79587,
+    "macro_f1_ci95": [
+     0.722,
+     0.8571
+    ],
+    "weighted_f1": 0.83893,
+    "roc_auc_ovr": 0.97763,
+    "log_loss": 0.49265,
+    "brier": 0.22894,
+    "ece": 0.03953,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7101,
+      "recall": 0.9423,
+      "f1": 0.8099,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8812,
+      "recall": 0.8704,
+      "f1": 0.8758,
+      "support": 162
+     },
+     "Right": {
+      "precision": 1.0,
+      "recall": 0.7143,
+      "f1": 0.8333,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8889,
+      "recall": 0.4211,
+      "f1": 0.5714,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      2,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      1,
+      20,
+      141,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      3,
+      10,
+      1
+     ],
+     [
+      0,
+      0,
+      11,
+      0,
+      8
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4574,
+      "accuracy": 0.5556,
+      "count": 18
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5488,
+      "accuracy": 0.5938,
+      "count": 32
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6463,
+      "accuracy": 0.7143,
+      "count": 21
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7538,
+      "accuracy": 0.7826,
+      "count": 23
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.852,
+      "accuracy": 0.9333,
+      "count": 60
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9546,
+      "accuracy": 0.9533,
+      "count": 107
+     }
+    ],
+    "inference_ms_per_1000": 173.97
+   },
+   {
+    "model": "TF-IDF + Extra Trees",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Extra Trees",
+    "family": "Ensemble tree",
+    "cv_macro_f1": 0.73978,
+    "cv_macro_f1_std": 0.03786,
+    "train_seconds": 3.23,
+    "accuracy": 0.84291,
+    "macro_precision": 0.85337,
+    "macro_recall": 0.7532,
+    "macro_f1": 0.78435,
+    "macro_f1_ci95": [
+     0.7094,
+     0.8441
+    ],
+    "weighted_f1": 0.83774,
+    "roc_auc_ovr": 0.96972,
+    "log_loss": 0.55045,
+    "brier": 0.23281,
+    "ece": 0.03902,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1": 0.8889,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7541,
+      "recall": 0.8846,
+      "f1": 0.8142,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8675,
+      "recall": 0.8889,
+      "f1": 0.878,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8333,
+      "recall": 0.7143,
+      "f1": 0.7692,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8889,
+      "recall": 0.4211,
+      "f1": 0.5714,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      12,
+      0,
+      2,
+      0,
+      0
+     ],
+     [
+      0,
+      46,
+      6,
+      0,
+      0
+     ],
+     [
+      1,
+      15,
+      144,
+      2,
+      0
+     ],
+     [
+      0,
+      0,
+      3,
+      10,
+      1
+     ],
+     [
+      0,
+      0,
+      11,
+      0,
+      8
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3917,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4604,
+      "accuracy": 0.75,
+      "count": 4
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5511,
+      "accuracy": 0.5217,
+      "count": 23
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6576,
+      "accuracy": 0.697,
+      "count": 33
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7543,
+      "accuracy": 0.75,
+      "count": 28
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8615,
+      "accuracy": 0.931,
+      "count": 58
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9606,
+      "accuracy": 0.9386,
+      "count": 114
+     }
+    ],
+    "inference_ms_per_1000": 158.88
+   },
+   {
+    "model": "LSA Embedding + Gradient Boosting (Hist)",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Histogram Gradient Boosting",
+    "family": "Boosting",
+    "cv_macro_f1": 0.71108,
+    "cv_macro_f1_std": 0.02063,
+    "train_seconds": 78.36,
+    "accuracy": 0.80843,
+    "macro_precision": 0.8074,
+    "macro_recall": 0.65656,
+    "macro_f1": 0.7156,
+    "macro_f1_ci95": [
+     0.6225,
+     0.7913
+    ],
+    "weighted_f1": 0.80063,
+    "roc_auc_ovr": 0.95042,
+    "log_loss": 1.00575,
+    "brier": 0.32437,
+    "ece": 0.14993,
+    "per_class": {
+     "Definition": {
+      "precision": 0.8889,
+      "recall": 0.5714,
+      "f1": 0.6957,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.8095,
+      "recall": 0.6538,
+      "f1": 0.7234,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8108,
+      "recall": 0.9259,
+      "f1": 0.8646,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.7778,
+      "recall": 0.5,
+      "f1": 0.6087,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.75,
+      "recall": 0.6316,
+      "f1": 0.6857,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      8,
+      0,
+      5,
+      0,
+      1
+     ],
+     [
+      0,
+      34,
+      17,
+      0,
+      1
+     ],
+     [
+      1,
+      8,
+      150,
+      2,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      7,
+      1
+     ],
+     [
+      0,
+      0,
+      7,
+      0,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3818,
+      "accuracy": 0.0,
+      "count": 2
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5635,
+      "accuracy": 0.5,
+      "count": 4
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6624,
+      "accuracy": 0.2857,
+      "count": 7
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7436,
+      "accuracy": 0.7143,
+      "count": 7
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8426,
+      "accuracy": 0.4615,
+      "count": 13
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9926,
+      "accuracy": 0.8596,
+      "count": 228
+     }
+    ],
+    "inference_ms_per_1000": 91.61
+   },
+   {
+    "model": "LSA Embedding + KNN",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "k-Nearest Neighbours",
+    "family": "Instance-based",
+    "cv_macro_f1": 0.5118,
+    "cv_macro_f1_std": 0.03544,
+    "train_seconds": 0.74,
+    "accuracy": 0.69349,
+    "macro_precision": 0.69898,
+    "macro_recall": 0.51626,
+    "macro_f1": 0.55997,
+    "macro_f1_ci95": [
+     0.4606,
+     0.6408
+    ],
+    "weighted_f1": 0.68922,
+    "roc_auc_ovr": 0.83401,
+    "log_loss": 2.18068,
+    "brier": 0.45242,
+    "ece": 0.08792,
+    "per_class": {
+     "Definition": {
+      "precision": 0.7143,
+      "recall": 0.3571,
+      "f1": 0.4762,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.4583,
+      "recall": 0.6346,
+      "f1": 0.5323,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.7866,
+      "recall": 0.7963,
+      "f1": 0.7914,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.75,
+      "recall": 0.2143,
+      "f1": 0.3333,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.7857,
+      "recall": 0.5789,
+      "f1": 0.6667,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      5,
+      3,
+      5,
+      0,
+      1
+     ],
+     [
+      1,
+      33,
+      18,
+      0,
+      0
+     ],
+     [
+      1,
+      30,
+      129,
+      1,
+      1
+     ],
+     [
+      0,
+      3,
+      7,
+      3,
+      1
+     ],
+     [
+      0,
+      3,
+      5,
+      0,
+      11
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.25,
+      "confidence": 0.2909,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.35,
+      "confidence": 0.3748,
+      "accuracy": 0.25,
+      "count": 4
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4437,
+      "accuracy": 0.4231,
+      "count": 26
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5634,
+      "accuracy": 0.6429,
+      "count": 42
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.654,
+      "accuracy": 0.5484,
+      "count": 31
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7406,
+      "accuracy": 0.7,
+      "count": 40
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8601,
+      "accuracy": 0.8108,
+      "count": 37
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.982,
+      "accuracy": 0.8375,
+      "count": 80
+     }
+    ],
+    "inference_ms_per_1000": 56.92
+   },
+   {
+    "model": "LSA Embedding + MLP (DNN)",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Multilayer Perceptron (DNN)",
+    "family": "Neural network",
+    "cv_macro_f1": 0.74281,
+    "cv_macro_f1_std": 0.05187,
+    "train_seconds": 8.91,
+    "accuracy": 0.83525,
+    "macro_precision": 0.8276,
+    "macro_recall": 0.78412,
+    "macro_f1": 0.80322,
+    "macro_f1_ci95": [
+     0.7325,
+     0.8626
+    ],
+    "weighted_f1": 0.83321,
+    "roc_auc_ovr": 0.95696,
+    "log_loss": 0.91865,
+    "brier": 0.28478,
+    "ece": 0.12739,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9167,
+      "recall": 0.7857,
+      "f1": 0.8462,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.75,
+      "recall": 0.6923,
+      "f1": 0.72,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8588,
+      "recall": 0.9012,
+      "f1": 0.8795,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8,
+      "recall": 0.8571,
+      "f1": 0.8276,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8125,
+      "recall": 0.6842,
+      "f1": 0.7429,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      11,
+      0,
+      2,
+      0,
+      1
+     ],
+     [
+      0,
+      36,
+      15,
+      0,
+      1
+     ],
+     [
+      1,
+      12,
+      146,
+      3,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      6,
+      0,
+      13
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4993,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5404,
+      "accuracy": 0.5,
+      "count": 2
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6683,
+      "accuracy": 0.5,
+      "count": 8
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7362,
+      "accuracy": 0.6,
+      "count": 5
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8452,
+      "accuracy": 0.5882,
+      "count": 17
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9924,
+      "accuracy": 0.8772,
+      "count": 228
+     }
+    ],
+    "inference_ms_per_1000": 44.79
+   },
+   {
+    "model": "Hybrid: Majority Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "majority",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.81819,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.85441,
+    "macro_precision": 0.864,
+    "macro_recall": 0.85411,
+    "macro_f1": 0.851,
+    "macro_f1_ci95": [
+     0.7904,
+     0.8968
+    ],
+    "weighted_f1": 0.85639,
+    "roc_auc_ovr": 0.97878,
+    "log_loss": 0.83129,
+    "brier": 0.2315,
+    "ece": 0.10844,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6806,
+      "recall": 0.9423,
+      "f1": 0.7903,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9252,
+      "recall": 0.8395,
+      "f1": 0.8803,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8571,
+      "recall": 0.6316,
+      "f1": 0.7273,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      23,
+      136,
+      2,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      7,
+      0,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.65,
+      "confidence": 0.6665,
+      "accuracy": 0.4138,
+      "count": 29
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9999,
+      "accuracy": 0.9095,
+      "count": 232
+     }
+    ],
+    "inference_ms_per_1000": 347.79
+   },
+   {
+    "model": "Hybrid: Competitive Voting (Thesis, Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "competitive",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.81595,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.85441,
+    "macro_precision": 0.864,
+    "macro_recall": 0.85411,
+    "macro_f1": 0.851,
+    "macro_f1_ci95": [
+     0.7904,
+     0.8968
+    ],
+    "weighted_f1": 0.85639,
+    "roc_auc_ovr": 0.97854,
+    "log_loss": 0.40007,
+    "brier": 0.23098,
+    "ece": 0.08814,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6806,
+      "recall": 0.9423,
+      "f1": 0.7903,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9252,
+      "recall": 0.8395,
+      "f1": 0.8803,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8571,
+      "recall": 0.6316,
+      "f1": 0.7273,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      23,
+      136,
+      2,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      7,
+      0,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.75,
+      "confidence": 0.7728,
+      "accuracy": 0.25,
+      "count": 12
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8557,
+      "accuracy": 0.5676,
+      "count": 37
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9673,
+      "accuracy": 0.9387,
+      "count": 212
+     }
+    ],
+    "inference_ms_per_1000": 360.1
+   },
+   {
+    "model": "Hybrid: Confidence-Weighted Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "confidence",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.81819,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.85441,
+    "macro_precision": 0.864,
+    "macro_recall": 0.85411,
+    "macro_f1": 0.851,
+    "macro_f1_ci95": [
+     0.7904,
+     0.8968
+    ],
+    "weighted_f1": 0.85639,
+    "roc_auc_ovr": 0.97214,
+    "log_loss": 1.31498,
+    "brier": 0.23004,
+    "ece": 0.11059,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.6806,
+      "recall": 0.9423,
+      "f1": 0.7903,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9252,
+      "recall": 0.8395,
+      "f1": 0.8803,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8571,
+      "recall": 0.6316,
+      "f1": 0.7273,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      23,
+      136,
+      2,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      12,
+      1
+     ],
+     [
+      0,
+      0,
+      7,
+      0,
+      12
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5658,
+      "accuracy": 0.2,
+      "count": 5
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6678,
+      "accuracy": 0.3636,
+      "count": 11
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7454,
+      "accuracy": 0.5385,
+      "count": 13
+     },
+     {
+      "bin": 0.95,
+      "confidence": 1.0,
+      "accuracy": 0.9095,
+      "count": 232
+     }
+    ],
+    "inference_ms_per_1000": 348.0
+   },
+   {
+    "model": "Hybrid: Rank-Weighted Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "weighted",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM"
+    ],
+    "weights": [
+     3,
+     2,
+     1
+    ],
+    "cv_macro_f1": 0.82929,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.87356,
+    "macro_precision": 0.87821,
+    "macro_recall": 0.89191,
+    "macro_f1": 0.87792,
+    "macro_f1_ci95": [
+     0.8244,
+     0.9183
+    ],
+    "weighted_f1": 0.87632,
+    "roc_auc_ovr": 0.97798,
+    "log_loss": 0.33701,
+    "brier": 0.18487,
+    "ece": 0.03963,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7,
+      "recall": 0.9423,
+      "f1": 0.8033,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9452,
+      "recall": 0.8519,
+      "f1": 0.8961,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8125,
+      "recall": 0.9286,
+      "f1": 0.8667,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.9333,
+      "recall": 0.7368,
+      "f1": 0.8235,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      21,
+      138,
+      3,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      5,
+      0,
+      14
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4819,
+      "accuracy": 0.6,
+      "count": 10
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5499,
+      "accuracy": 0.4444,
+      "count": 9
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6463,
+      "accuracy": 0.6667,
+      "count": 21
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7569,
+      "accuracy": 0.5882,
+      "count": 17
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8618,
+      "accuracy": 0.8571,
+      "count": 56
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.955,
+      "accuracy": 0.9865,
+      "count": 148
+     }
+    ],
+    "inference_ms_per_1000": 347.66
+   },
+   {
+    "model": "Hybrid: Optimized Soft Voting (Top-5)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "weighted",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM",
+     "TF-IDF + Ridge Classifier",
+     "TF-IDF + Logistic Regression"
+    ],
+    "weights": [
+     0.2522506648688055,
+     0.34887084560564774,
+     0.01211950551291564,
+     0.1450189495976998,
+     0.24174003441493114
+    ],
+    "cv_macro_f1": 0.83679,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.86973,
+    "macro_precision": 0.84608,
+    "macro_recall": 0.87763,
+    "macro_f1": 0.85716,
+    "macro_f1_ci95": [
+     0.7982,
+     0.9062
+    ],
+    "weighted_f1": 0.87183,
+    "roc_auc_ovr": 0.97628,
+    "log_loss": 0.36168,
+    "brier": 0.18606,
+    "ece": 0.05832,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9286,
+      "recall": 0.9286,
+      "f1": 0.9286,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.7206,
+      "recall": 0.9423,
+      "f1": 0.8167,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9452,
+      "recall": 0.8519,
+      "f1": 0.8961,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8125,
+      "recall": 0.9286,
+      "f1": 0.8667,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.8235,
+      "recall": 0.7368,
+      "f1": 0.7778,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      13,
+      0,
+      0,
+      0,
+      1
+     ],
+     [
+      0,
+      49,
+      3,
+      0,
+      0
+     ],
+     [
+      1,
+      19,
+      138,
+      3,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      5,
+      0,
+      14
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3941,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4793,
+      "accuracy": 0.375,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5583,
+      "accuracy": 0.5238,
+      "count": 21
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6528,
+      "accuracy": 0.6818,
+      "count": 22
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7574,
+      "accuracy": 0.8857,
+      "count": 35
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8582,
+      "accuracy": 0.913,
+      "count": 69
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.949,
+      "accuracy": 0.9905,
+      "count": 105
+     }
+    ],
+    "inference_ms_per_1000": 420.19
+   },
+   {
+    "model": "Hybrid: Stacking Meta-Learner (All models)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "stacking",
+    "family": "Hybrid",
+    "members": "all 20 models",
+    "weights": null,
+    "cv_macro_f1": 0.85109,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.89655,
+    "macro_precision": 0.85142,
+    "macro_recall": 0.93388,
+    "macro_f1": 0.88652,
+    "macro_f1_ci95": [
+     0.8328,
+     0.9295
+    ],
+    "weighted_f1": 0.89911,
+    "roc_auc_ovr": 0.98857,
+    "log_loss": 0.33595,
+    "brier": 0.17354,
+    "ece": 0.04488,
+    "per_class": {
+     "Definition": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.8,
+      "recall": 0.9231,
+      "f1": 0.8571,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9724,
+      "recall": 0.8704,
+      "f1": 0.9186,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.7647,
+      "recall": 0.9286,
+      "f1": 0.8387,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.72,
+      "recall": 0.9474,
+      "f1": 0.8182,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      48,
+      4,
+      0,
+      0
+     ],
+     [
+      0,
+      12,
+      141,
+      3,
+      6
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      1,
+      18
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3484,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4659,
+      "accuracy": 0.5556,
+      "count": 9
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5571,
+      "accuracy": 0.8182,
+      "count": 11
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6603,
+      "accuracy": 0.6,
+      "count": 10
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7518,
+      "accuracy": 0.8235,
+      "count": 17
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8577,
+      "accuracy": 0.9348,
+      "count": 46
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.954,
+      "accuracy": 0.9401,
+      "count": 167
+     }
+    ],
+    "inference_ms_per_1000": 1553.11
+   },
+   {
+    "model": "Hybrid: ML + Rule-Based Stacking",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "rule_stacking",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Logistic Regression",
+     "Word+Char TF-IDF + Logistic Regression",
+     "BoW + Linear SVM",
+     "TF-IDF + Ridge Classifier",
+     "TF-IDF + Logistic Regression"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.82845,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.92337,
+    "macro_precision": 0.85938,
+    "macro_recall": 0.94106,
+    "macro_f1": 0.89482,
+    "macro_f1_ci95": [
+     0.8398,
+     0.934
+    ],
+    "weighted_f1": 0.92609,
+    "roc_auc_ovr": 0.99272,
+    "log_loss": 0.22698,
+    "brier": 0.12329,
+    "ece": 0.02188,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9333,
+      "recall": 1.0,
+      "f1": 0.9655,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.9107,
+      "recall": 0.9808,
+      "f1": 0.9444,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.9865,
+      "recall": 0.9012,
+      "f1": 0.9419,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8125,
+      "recall": 0.9286,
+      "f1": 0.8667,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.6538,
+      "recall": 0.8947,
+      "f1": 0.7556,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      14,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      51,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      5,
+      146,
+      3,
+      8
+     ],
+     [
+      0,
+      0,
+      0,
+      13,
+      1
+     ],
+     [
+      0,
+      0,
+      2,
+      0,
+      17
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4808,
+      "accuracy": 1.0,
+      "count": 2
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5642,
+      "accuracy": 0.3333,
+      "count": 6
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6507,
+      "accuracy": 0.75,
+      "count": 12
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7801,
+      "accuracy": 0.7273,
+      "count": 11
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8614,
+      "accuracy": 0.8718,
+      "count": 39
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.968,
+      "accuracy": 0.9738,
+      "count": 191
+     }
+    ],
+    "inference_ms_per_1000": 496.4
+   },
+   {
+    "model": "Hybrid: Thesis Hierarchical Binary Decomposition",
+    "category": "Hybrid",
+    "vectorizer": "TF-IDF / char",
+    "algorithm": "hierarchical",
+    "family": "Hybrid",
+    "members": [
+     "TF-IDF + Logistic Regression",
+     "TF-IDF + Linear SVM",
+     "Char n-gram + Linear SVM"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.77019,
+    "cv_macro_f1_std": null,
+    "train_seconds": 8.66,
+    "accuracy": 0.86207,
+    "macro_precision": 0.86757,
+    "macro_recall": 0.80468,
+    "macro_f1": 0.82652,
+    "macro_f1_ci95": [
+     0.7508,
+     0.8853
+    ],
+    "weighted_f1": 0.86123,
+    "roc_auc_ovr": 0.97981,
+    "log_loss": 0.37921,
+    "brier": 0.19893,
+    "ece": 0.07115,
+    "per_class": {
+     "Definition": {
+      "precision": 0.9286,
+      "recall": 0.9286,
+      "f1": 0.9286,
+      "support": 14
+     },
+     "Heading": {
+      "precision": 0.746,
+      "recall": 0.9038,
+      "f1": 0.8174,
+      "support": 52
+     },
+     "Obligation": {
+      "precision": 0.8994,
+      "recall": 0.8827,
+      "f1": 0.891,
+      "support": 162
+     },
+     "Right": {
+      "precision": 0.8889,
+      "recall": 0.5714,
+      "f1": 0.6957,
+      "support": 14
+     },
+     "Risk": {
+      "precision": 0.875,
+      "recall": 0.7368,
+      "f1": 0.8,
+      "support": 19
+     }
+    },
+    "confusion_matrix": [
+     [
+      13,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      47,
+      5,
+      0,
+      0
+     ],
+     [
+      1,
+      16,
+      143,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      5,
+      8,
+      1
+     ],
+     [
+      0,
+      0,
+      5,
+      0,
+      14
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3954,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4797,
+      "accuracy": 0.5,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.556,
+      "accuracy": 0.5882,
+      "count": 34
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6468,
+      "accuracy": 0.6429,
+      "count": 28
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7527,
+      "accuracy": 0.9143,
+      "count": 35
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8561,
+      "accuracy": 0.9565,
+      "count": 69
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9393,
+      "accuracy": 0.9884,
+      "count": 86
+     }
+    ],
+    "inference_ms_per_1000": 1177.67
+   }
+  ],
+  "y_test": [
+   4,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   1,
+   3,
+   4,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   4,
+   2,
+   4,
+   2,
+   1,
+   1,
+   0,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   0,
+   2,
+   4,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   4,
+   2,
+   0,
+   1,
+   0,
+   4,
+   1,
+   2,
+   2,
+   4,
+   2,
+   2,
+   1,
+   3,
+   2,
+   1,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   3,
+   1,
+   2,
+   1,
+   2,
+   2,
+   4,
+   0,
+   3,
+   2,
+   1,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   4,
+   3,
+   2,
+   4,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   4,
+   2,
+   4,
+   4,
+   1,
+   2,
+   2,
+   4,
+   1,
+   1,
+   2,
+   2,
+   0,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   2,
+   0,
+   2,
+   3,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   4,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   3,
+   2,
+   2,
+   2,
+   3,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   2,
+   4,
+   3,
+   2,
+   3,
+   2,
+   0,
+   3,
+   0,
+   2,
+   3,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   2,
+   4,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   1,
+   3,
+   2,
+   2,
+   2,
+   1,
+   2,
+   4,
+   2,
+   1,
+   2,
+   3,
+   2
+  ]
+ },
+ "related_party": {
+  "labels": [
+   "Contractor",
+   "Employer",
+   "Shared"
+  ],
+  "n_dev": 780,
+  "n_test": 195,
+  "default_model": "Hybrid: Optimized Soft Voting (Top-5)",
+  "best_individual": "BoW + Decision Tree",
+  "results": [
+   {
+    "model": "BoW + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.85034,
+    "cv_macro_f1_std": 0.03032,
+    "train_seconds": 0.48,
+    "accuracy": 0.92308,
+    "macro_precision": 0.86174,
+    "macro_recall": 0.88175,
+    "macro_f1": 0.87049,
+    "macro_f1_ci95": [
+     0.806,
+     0.9332
+    ],
+    "weighted_f1": 0.92477,
+    "roc_auc_ovr": 0.9613,
+    "log_loss": 0.4174,
+    "brier": 0.1617,
+    "ece": 0.06873,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9625,
+      "recall": 0.9167,
+      "f1": 0.939,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6667,
+      "recall": 0.7619,
+      "f1": 0.7111,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.956,
+      "recall": 0.9667,
+      "f1": 0.9613,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      77,
+      6,
+      1
+     ],
+     [
+      2,
+      16,
+      3
+     ],
+     [
+      1,
+      2,
+      87
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.439,
+      "accuracy": 0.5,
+      "count": 4
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5367,
+      "accuracy": 1.0,
+      "count": 11
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6486,
+      "accuracy": 0.8571,
+      "count": 7
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7672,
+      "accuracy": 0.6667,
+      "count": 9
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8601,
+      "accuracy": 0.913,
+      "count": 23
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9821,
+      "accuracy": 0.9504,
+      "count": 141
+     }
+    ],
+    "inference_ms_per_1000": 40.64
+   },
+   {
+    "model": "BoW + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.82495,
+    "cv_macro_f1_std": 0.04021,
+    "train_seconds": 0.58,
+    "accuracy": 0.89744,
+    "macro_precision": 0.84003,
+    "macro_recall": 0.80291,
+    "macro_f1": 0.81766,
+    "macro_f1_ci95": [
+     0.7389,
+     0.8858
+    ],
+    "weighted_f1": 0.89315,
+    "roc_auc_ovr": 0.96512,
+    "log_loss": 0.37743,
+    "brier": 0.19282,
+    "ece": 0.11703,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9186,
+      "recall": 0.9405,
+      "f1": 0.9294,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6875,
+      "recall": 0.5238,
+      "f1": 0.5946,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.914,
+      "recall": 0.9444,
+      "f1": 0.929,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      79,
+      4,
+      1
+     ],
+     [
+      3,
+      11,
+      7
+     ],
+     [
+      4,
+      1,
+      85
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4474,
+      "accuracy": 0.4,
+      "count": 5
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5491,
+      "accuracy": 0.7407,
+      "count": 27
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6541,
+      "accuracy": 0.8,
+      "count": 20
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7542,
+      "accuracy": 0.9333,
+      "count": 30
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8489,
+      "accuracy": 0.9722,
+      "count": 72
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9453,
+      "accuracy": 0.9512,
+      "count": 41
+     }
+    ],
+    "inference_ms_per_1000": 68.41
+   },
+   {
+    "model": "BoW + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.97265,
+    "cv_macro_f1_std": 0.00778,
+    "train_seconds": 0.32,
+    "accuracy": 0.97436,
+    "macro_precision": 0.98074,
+    "macro_recall": 0.98095,
+    "macro_f1": 0.98083,
+    "macro_f1_ci95": [
+     0.9623,
+     0.9962
+    ],
+    "weighted_f1": 0.97436,
+    "roc_auc_ovr": 0.98342,
+    "log_loss": 0.53247,
+    "brier": 0.05167,
+    "ece": 0.02663,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9647,
+      "recall": 0.9762,
+      "f1": 0.9704,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9775,
+      "recall": 0.9667,
+      "f1": 0.9721,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      82,
+      0,
+      2
+     ],
+     [
+      0,
+      21,
+      0
+     ],
+     [
+      3,
+      0,
+      87
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.85,
+      "confidence": 0.8067,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.95,
+      "confidence": 1.0,
+      "accuracy": 0.9742,
+      "count": 194
+     }
+    ],
+    "inference_ms_per_1000": 33.68
+   },
+   {
+    "model": "TF-IDF + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.84229,
+    "cv_macro_f1_std": 0.02995,
+    "train_seconds": 0.55,
+    "accuracy": 0.87692,
+    "macro_precision": 0.81248,
+    "macro_recall": 0.81138,
+    "macro_f1": 0.81175,
+    "macro_f1_ci95": [
+     0.7325,
+     0.8781
+    ],
+    "weighted_f1": 0.87694,
+    "roc_auc_ovr": 0.97389,
+    "log_loss": 0.33917,
+    "brier": 0.17682,
+    "ece": 0.10546,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9259,
+      "recall": 0.8929,
+      "f1": 0.9091,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.619,
+      "recall": 0.619,
+      "f1": 0.619,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8925,
+      "recall": 0.9222,
+      "f1": 0.9071,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      75,
+      6,
+      3
+     ],
+     [
+      1,
+      13,
+      7
+     ],
+     [
+      5,
+      2,
+      83
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4723,
+      "accuracy": 0.4615,
+      "count": 13
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5486,
+      "accuracy": 0.4737,
+      "count": 19
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.648,
+      "accuracy": 0.8636,
+      "count": 22
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7552,
+      "accuracy": 0.9412,
+      "count": 34
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.851,
+      "accuracy": 0.9556,
+      "count": 45
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9479,
+      "accuracy": 1.0,
+      "count": 62
+     }
+    ],
+    "inference_ms_per_1000": 61.51
+   },
+   {
+    "model": "TF-IDF + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.83981,
+    "cv_macro_f1_std": 0.02924,
+    "train_seconds": 0.43,
+    "accuracy": 0.90256,
+    "macro_precision": 0.86627,
+    "macro_recall": 0.83095,
+    "macro_f1": 0.84591,
+    "macro_f1_ci95": [
+     0.7693,
+     0.909
+    ],
+    "weighted_f1": 0.90022,
+    "roc_auc_ovr": 0.97949,
+    "log_loss": 0.30613,
+    "brier": 0.15886,
+    "ece": 0.10649,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9405,
+      "recall": 0.9405,
+      "f1": 0.9405,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.7647,
+      "recall": 0.619,
+      "f1": 0.6842,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8936,
+      "recall": 0.9333,
+      "f1": 0.913,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      79,
+      2,
+      3
+     ],
+     [
+      1,
+      13,
+      7
+     ],
+     [
+      4,
+      2,
+      84
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4601,
+      "accuracy": 0.5,
+      "count": 4
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5495,
+      "accuracy": 0.5,
+      "count": 18
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6615,
+      "accuracy": 0.8462,
+      "count": 26
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7477,
+      "accuracy": 0.9062,
+      "count": 32
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8518,
+      "accuracy": 0.9804,
+      "count": 51
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9487,
+      "accuracy": 1.0,
+      "count": 64
+     }
+    ],
+    "inference_ms_per_1000": 49.21
+   },
+   {
+    "model": "TF-IDF + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.96511,
+    "cv_macro_f1_std": 0.01325,
+    "train_seconds": 0.28,
+    "accuracy": 0.96923,
+    "macro_precision": 0.9771,
+    "macro_recall": 0.96534,
+    "macro_f1": 0.97089,
+    "macro_f1_ci95": [
+     0.9407,
+     0.9924
+    ],
+    "weighted_f1": 0.96922,
+    "roc_auc_ovr": 0.97758,
+    "log_loss": 0.64102,
+    "brier": 0.06393,
+    "ece": 0.03324,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 0.9524,
+      "f1": 0.9756,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9773,
+      "recall": 0.9556,
+      "f1": 0.9663,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      20,
+      1
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5173,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.95,
+      "confidence": 1.0,
+      "accuracy": 0.9691,
+      "count": 194
+     }
+    ],
+    "inference_ms_per_1000": 39.39
+   },
+   {
+    "model": "LSA Embedding + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.83117,
+    "cv_macro_f1_std": 0.03725,
+    "train_seconds": 0.7,
+    "accuracy": 0.85128,
+    "macro_precision": 0.7974,
+    "macro_recall": 0.84074,
+    "macro_f1": 0.81399,
+    "macro_f1_ci95": [
+     0.7441,
+     0.8744
+    ],
+    "weighted_f1": 0.85453,
+    "roc_auc_ovr": 0.96851,
+    "log_loss": 0.3506,
+    "brier": 0.20589,
+    "ece": 0.0299,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9,
+      "recall": 0.8571,
+      "f1": 0.878,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6071,
+      "recall": 0.8095,
+      "f1": 0.6939,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8851,
+      "recall": 0.8556,
+      "f1": 0.8701,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      72,
+      6,
+      6
+     ],
+     [
+      0,
+      17,
+      4
+     ],
+     [
+      8,
+      5,
+      77
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3546,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4635,
+      "accuracy": 0.3333,
+      "count": 6
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5424,
+      "accuracy": 0.5556,
+      "count": 18
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6605,
+      "accuracy": 0.7,
+      "count": 20
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7493,
+      "accuracy": 0.6667,
+      "count": 15
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8426,
+      "accuracy": 0.8889,
+      "count": 36
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.975,
+      "accuracy": 0.9798,
+      "count": 99
+     }
+    ],
+    "inference_ms_per_1000": 49.87
+   },
+   {
+    "model": "LSA Embedding + RBF SVM",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Support Vector Machine (RBF)",
+    "family": "Margin",
+    "cv_macro_f1": 0.83463,
+    "cv_macro_f1_std": 0.02547,
+    "train_seconds": 1.46,
+    "accuracy": 0.88718,
+    "macro_precision": 0.83619,
+    "macro_recall": 0.84392,
+    "macro_f1": 0.83988,
+    "macro_f1_ci95": [
+     0.7686,
+     0.8984
+    ],
+    "weighted_f1": 0.88763,
+    "roc_auc_ovr": 0.96397,
+    "log_loss": 0.37648,
+    "brier": 0.18958,
+    "ece": 0.07145,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9176,
+      "recall": 0.9286,
+      "f1": 0.9231,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6818,
+      "recall": 0.7143,
+      "f1": 0.6977,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9091,
+      "recall": 0.8889,
+      "f1": 0.8989,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      78,
+      3,
+      3
+     ],
+     [
+      1,
+      15,
+      5
+     ],
+     [
+      6,
+      4,
+      80
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4666,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5062,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7763,
+      "accuracy": 0.7568,
+      "count": 37
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8504,
+      "accuracy": 0.9286,
+      "count": 154
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9016,
+      "accuracy": 1.0,
+      "count": 2
+     }
+    ],
+    "inference_ms_per_1000": 110.91
+   },
+   {
+    "model": "LSA Embedding + Decision Tree",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Decision Tree",
+    "family": "Tree",
+    "cv_macro_f1": 0.61701,
+    "cv_macro_f1_std": 0.02959,
+    "train_seconds": 1.12,
+    "accuracy": 0.62564,
+    "macro_precision": 0.57634,
+    "macro_recall": 0.60185,
+    "macro_f1": 0.58093,
+    "macro_f1_ci95": [
+     0.5053,
+     0.6539
+    ],
+    "weighted_f1": 0.62781,
+    "roc_auc_ovr": 0.72392,
+    "log_loss": 5.98493,
+    "brier": 0.65611,
+    "ece": 0.32368,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.6354,
+      "recall": 0.7262,
+      "f1": 0.6778,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.3793,
+      "recall": 0.5238,
+      "f1": 0.44,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.7143,
+      "recall": 0.5556,
+      "f1": 0.625,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      61,
+      7,
+      16
+     ],
+     [
+      6,
+      11,
+      4
+     ],
+     [
+      29,
+      11,
+      50
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5823,
+      "accuracy": 0.3333,
+      "count": 3
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6684,
+      "accuracy": 0.2778,
+      "count": 18
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7387,
+      "accuracy": 0.375,
+      "count": 8
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.886,
+      "accuracy": 0.4,
+      "count": 5
+     },
+     {
+      "bin": 0.95,
+      "confidence": 1.0,
+      "accuracy": 0.6894,
+      "count": 161
+     }
+    ],
+    "inference_ms_per_1000": 50.45
+   },
+   {
+    "model": "BoW + Multinomial Naive Bayes",
+    "category": "Individual",
+    "vectorizer": "Bag of Words",
+    "algorithm": "Multinomial Naive Bayes",
+    "family": "Probabilistic",
+    "cv_macro_f1": 0.68737,
+    "cv_macro_f1_std": 0.03555,
+    "train_seconds": 0.31,
+    "accuracy": 0.74872,
+    "macro_precision": 0.70623,
+    "macro_recall": 0.69365,
+    "macro_f1": 0.69705,
+    "macro_f1_ci95": [
+     0.6172,
+     0.767
+    ],
+    "weighted_f1": 0.74605,
+    "roc_auc_ovr": 0.88261,
+    "log_loss": 1.19715,
+    "brier": 0.41115,
+    "ece": 0.18354,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.7423,
+      "recall": 0.8571,
+      "f1": 0.7956,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.5789,
+      "recall": 0.5238,
+      "f1": 0.55,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.7975,
+      "recall": 0.7,
+      "f1": 0.7456,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      72,
+      4,
+      8
+     ],
+     [
+      2,
+      11,
+      8
+     ],
+     [
+      23,
+      4,
+      63
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4905,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5486,
+      "accuracy": 0.375,
+      "count": 8
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6483,
+      "accuracy": 0.4,
+      "count": 10
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7512,
+      "accuracy": 0.6,
+      "count": 10
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8511,
+      "accuracy": 0.6,
+      "count": 15
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9876,
+      "accuracy": 0.8146,
+      "count": 151
+     }
+    ],
+    "inference_ms_per_1000": 57.86
+   },
+   {
+    "model": "TF-IDF + Complement Naive Bayes",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Complement Naive Bayes",
+    "family": "Probabilistic",
+    "cv_macro_f1": 0.68591,
+    "cv_macro_f1_std": 0.0305,
+    "train_seconds": 0.25,
+    "accuracy": 0.73846,
+    "macro_precision": 0.68959,
+    "macro_recall": 0.70926,
+    "macro_f1": 0.69616,
+    "macro_f1_ci95": [
+     0.6179,
+     0.7724
+    ],
+    "weighted_f1": 0.74049,
+    "roc_auc_ovr": 0.87645,
+    "log_loss": 0.6838,
+    "brier": 0.38761,
+    "ece": 0.13406,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.7283,
+      "recall": 0.7976,
+      "f1": 0.7614,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.52,
+      "recall": 0.619,
+      "f1": 0.5652,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8205,
+      "recall": 0.7111,
+      "f1": 0.7619,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      67,
+      8,
+      9
+     ],
+     [
+      3,
+      13,
+      5
+     ],
+     [
+      22,
+      4,
+      64
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3768,
+      "accuracy": 0.4,
+      "count": 20
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4531,
+      "accuracy": 0.5769,
+      "count": 52
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5452,
+      "accuracy": 0.7027,
+      "count": 37
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6575,
+      "accuracy": 0.8,
+      "count": 30
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7469,
+      "accuracy": 1.0,
+      "count": 20
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8588,
+      "accuracy": 1.0,
+      "count": 23
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9364,
+      "accuracy": 1.0,
+      "count": 13
+     }
+    ],
+    "inference_ms_per_1000": 37.19
+   },
+   {
+    "model": "TF-IDF + SGD (log-loss)",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Stochastic Gradient Descent",
+    "family": "Linear",
+    "cv_macro_f1": 0.84378,
+    "cv_macro_f1_std": 0.00735,
+    "train_seconds": 0.35,
+    "accuracy": 0.89744,
+    "macro_precision": 0.86583,
+    "macro_recall": 0.83942,
+    "macro_f1": 0.85115,
+    "macro_f1_ci95": [
+     0.7781,
+     0.9112
+    ],
+    "weighted_f1": 0.89587,
+    "roc_auc_ovr": 0.97452,
+    "log_loss": 0.30306,
+    "brier": 0.16363,
+    "ece": 0.0686,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9186,
+      "recall": 0.9405,
+      "f1": 0.9294,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.7778,
+      "recall": 0.6667,
+      "f1": 0.7179,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9011,
+      "recall": 0.9111,
+      "f1": 0.9061,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      79,
+      2,
+      3
+     ],
+     [
+      1,
+      14,
+      6
+     ],
+     [
+      6,
+      2,
+      82
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4691,
+      "accuracy": 0.5,
+      "count": 2
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5471,
+      "accuracy": 0.6316,
+      "count": 19
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6617,
+      "accuracy": 0.7391,
+      "count": 23
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7492,
+      "accuracy": 0.8421,
+      "count": 19
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8524,
+      "accuracy": 0.9608,
+      "count": 51
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9551,
+      "accuracy": 0.9877,
+      "count": 81
+     }
+    ],
+    "inference_ms_per_1000": 39.09
+   },
+   {
+    "model": "TF-IDF + Ridge Classifier",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Ridge Classifier",
+    "family": "Linear",
+    "cv_macro_f1": 0.84629,
+    "cv_macro_f1_std": 0.02022,
+    "train_seconds": 0.61,
+    "accuracy": 0.89744,
+    "macro_precision": 0.85171,
+    "macro_recall": 0.85132,
+    "macro_f1": 0.8515,
+    "macro_f1_ci95": [
+     0.7798,
+     0.9115
+    ],
+    "weighted_f1": 0.89751,
+    "roc_auc_ovr": 0.97547,
+    "log_loss": 0.33118,
+    "brier": 0.17571,
+    "ece": 0.10543,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9398,
+      "recall": 0.9286,
+      "f1": 0.9341,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.7143,
+      "recall": 0.7143,
+      "f1": 0.7143,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9011,
+      "recall": 0.9111,
+      "f1": 0.9061,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      78,
+      3,
+      3
+     ],
+     [
+      0,
+      15,
+      6
+     ],
+     [
+      5,
+      3,
+      82
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4853,
+      "accuracy": 0.6,
+      "count": 5
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5479,
+      "accuracy": 0.5789,
+      "count": 19
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6543,
+      "accuracy": 0.8438,
+      "count": 32
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.755,
+      "accuracy": 0.9,
+      "count": 30
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.85,
+      "accuracy": 0.9615,
+      "count": 52
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9442,
+      "accuracy": 1.0,
+      "count": 57
+     }
+    ],
+    "inference_ms_per_1000": 57.11
+   },
+   {
+    "model": "Char n-gram + Linear SVM",
+    "category": "Individual",
+    "vectorizer": "Character n-gram TF-IDF",
+    "algorithm": "Support Vector Machine",
+    "family": "Margin",
+    "cv_macro_f1": 0.79949,
+    "cv_macro_f1_std": 0.03806,
+    "train_seconds": 1.83,
+    "accuracy": 0.86154,
+    "macro_precision": 0.80026,
+    "macro_recall": 0.80026,
+    "macro_f1": 0.80026,
+    "macro_f1_ci95": [
+     0.7248,
+     0.8694
+    ],
+    "weighted_f1": 0.86154,
+    "roc_auc_ovr": 0.95883,
+    "log_loss": 0.37941,
+    "brier": 0.21276,
+    "ece": 0.08223,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.8929,
+      "recall": 0.8929,
+      "f1": 0.8929,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.619,
+      "recall": 0.619,
+      "f1": 0.619,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8889,
+      "recall": 0.8889,
+      "f1": 0.8889,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      75,
+      5,
+      4
+     ],
+     [
+      2,
+      13,
+      6
+     ],
+     [
+      7,
+      3,
+      80
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3863,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4702,
+      "accuracy": 0.7,
+      "count": 10
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5626,
+      "accuracy": 0.5294,
+      "count": 17
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6443,
+      "accuracy": 0.7407,
+      "count": 27
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7517,
+      "accuracy": 0.9259,
+      "count": 27
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8469,
+      "accuracy": 0.8929,
+      "count": 56
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9491,
+      "accuracy": 1.0,
+      "count": 57
+     }
+    ],
+    "inference_ms_per_1000": 312.42
+   },
+   {
+    "model": "Word+Char TF-IDF + Logistic Regression",
+    "category": "Individual",
+    "vectorizer": "Word + character TF-IDF",
+    "algorithm": "Logistic Regression",
+    "family": "Linear",
+    "cv_macro_f1": 0.84568,
+    "cv_macro_f1_std": 0.00966,
+    "train_seconds": 2.38,
+    "accuracy": 0.91282,
+    "macro_precision": 0.86014,
+    "macro_recall": 0.87407,
+    "macro_f1": 0.86639,
+    "macro_f1_ci95": [
+     0.8017,
+     0.9226
+    ],
+    "weighted_f1": 0.91375,
+    "roc_auc_ovr": 0.96587,
+    "log_loss": 0.31561,
+    "brier": 0.16612,
+    "ece": 0.07362,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.95,
+      "recall": 0.9048,
+      "f1": 0.9268,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6957,
+      "recall": 0.7619,
+      "f1": 0.7273,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9348,
+      "recall": 0.9556,
+      "f1": 0.9451,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      76,
+      6,
+      2
+     ],
+     [
+      1,
+      16,
+      4
+     ],
+     [
+      3,
+      1,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4687,
+      "accuracy": 0.875,
+      "count": 8
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5371,
+      "accuracy": 0.6154,
+      "count": 13
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6546,
+      "accuracy": 0.8571,
+      "count": 14
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7534,
+      "accuracy": 0.7826,
+      "count": 23
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.856,
+      "accuracy": 0.9556,
+      "count": 45
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9554,
+      "accuracy": 0.9783,
+      "count": 92
+     }
+    ],
+    "inference_ms_per_1000": 407.99
+   },
+   {
+    "model": "TF-IDF + Random Forest",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Random Forest",
+    "family": "Ensemble tree",
+    "cv_macro_f1": 0.88794,
+    "cv_macro_f1_std": 0.02072,
+    "train_seconds": 2.74,
+    "accuracy": 0.92308,
+    "macro_precision": 0.92315,
+    "macro_recall": 0.83492,
+    "macro_f1": 0.86483,
+    "macro_f1_ci95": [
+     0.7901,
+     0.9264
+    ],
+    "weighted_f1": 0.91797,
+    "roc_auc_ovr": 0.99025,
+    "log_loss": 0.32029,
+    "brier": 0.15717,
+    "ece": 0.16774,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9333,
+      "recall": 1.0,
+      "f1": 0.9655,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.9231,
+      "recall": 0.5714,
+      "f1": 0.7059,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.913,
+      "recall": 0.9333,
+      "f1": 0.9231,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      84,
+      0,
+      0
+     ],
+     [
+      1,
+      12,
+      8
+     ],
+     [
+      5,
+      1,
+      84
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3861,
+      "accuracy": 0.0,
+      "count": 3
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4683,
+      "accuracy": 0.7333,
+      "count": 15
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5489,
+      "accuracy": 0.7727,
+      "count": 22
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6576,
+      "accuracy": 0.913,
+      "count": 23
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7596,
+      "accuracy": 0.9697,
+      "count": 33
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8588,
+      "accuracy": 1.0,
+      "count": 53
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9487,
+      "accuracy": 1.0,
+      "count": 46
+     }
+    ],
+    "inference_ms_per_1000": 212.91
+   },
+   {
+    "model": "TF-IDF + Extra Trees",
+    "category": "Individual",
+    "vectorizer": "TF-IDF",
+    "algorithm": "Extra Trees",
+    "family": "Ensemble tree",
+    "cv_macro_f1": 0.82896,
+    "cv_macro_f1_std": 0.04187,
+    "train_seconds": 2.68,
+    "accuracy": 0.87692,
+    "macro_precision": 0.86831,
+    "macro_recall": 0.77513,
+    "macro_f1": 0.80423,
+    "macro_f1_ci95": [
+     0.7094,
+     0.8788
+    ],
+    "weighted_f1": 0.87075,
+    "roc_auc_ovr": 0.97738,
+    "log_loss": 0.36887,
+    "brier": 0.19741,
+    "ece": 0.12513,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9383,
+      "recall": 0.9048,
+      "f1": 0.9212,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.8333,
+      "recall": 0.4762,
+      "f1": 0.6061,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8333,
+      "recall": 0.9444,
+      "f1": 0.8854,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      76,
+      1,
+      7
+     ],
+     [
+      1,
+      10,
+      10
+     ],
+     [
+      4,
+      1,
+      85
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3708,
+      "accuracy": 0.0,
+      "count": 2
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4649,
+      "accuracy": 0.6842,
+      "count": 19
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5551,
+      "accuracy": 0.6522,
+      "count": 23
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6552,
+      "accuracy": 0.7778,
+      "count": 27
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7514,
+      "accuracy": 0.9333,
+      "count": 30
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8547,
+      "accuracy": 1.0,
+      "count": 39
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9486,
+      "accuracy": 1.0,
+      "count": 55
+     }
+    ],
+    "inference_ms_per_1000": 218.37
+   },
+   {
+    "model": "LSA Embedding + Gradient Boosting (Hist)",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Histogram Gradient Boosting",
+    "family": "Boosting",
+    "cv_macro_f1": 0.79578,
+    "cv_macro_f1_std": 0.04939,
+    "train_seconds": 70.1,
+    "accuracy": 0.82564,
+    "macro_precision": 0.79484,
+    "macro_recall": 0.76323,
+    "macro_f1": 0.77441,
+    "macro_f1_ci95": [
+     0.6979,
+     0.8415
+    ],
+    "weighted_f1": 0.82191,
+    "roc_auc_ovr": 0.95448,
+    "log_loss": 0.6032,
+    "brier": 0.26994,
+    "ece": 0.11355,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.8144,
+      "recall": 0.9405,
+      "f1": 0.8729,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.7059,
+      "recall": 0.5714,
+      "f1": 0.6316,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8642,
+      "recall": 0.7778,
+      "f1": 0.8187,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      79,
+      1,
+      4
+     ],
+     [
+      2,
+      12,
+      7
+     ],
+     [
+      16,
+      4,
+      70
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5647,
+      "accuracy": 0.5,
+      "count": 6
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6462,
+      "accuracy": 0.375,
+      "count": 8
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7423,
+      "accuracy": 0.6,
+      "count": 5
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.853,
+      "accuracy": 0.52,
+      "count": 25
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9904,
+      "accuracy": 0.9205,
+      "count": 151
+     }
+    ],
+    "inference_ms_per_1000": 106.66
+   },
+   {
+    "model": "LSA Embedding + KNN",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "k-Nearest Neighbours",
+    "family": "Instance-based",
+    "cv_macro_f1": 0.62865,
+    "cv_macro_f1_std": 0.03079,
+    "train_seconds": 0.75,
+    "accuracy": 0.72308,
+    "macro_precision": 0.65758,
+    "macro_recall": 0.61138,
+    "macro_f1": 0.62425,
+    "macro_f1_ci95": [
+     0.5376,
+     0.7014
+    ],
+    "weighted_f1": 0.71347,
+    "roc_auc_ovr": 0.85074,
+    "log_loss": 1.0538,
+    "brier": 0.36524,
+    "ece": 0.03611,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.7176,
+      "recall": 0.7262,
+      "f1": 0.7219,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.5,
+      "recall": 0.2857,
+      "f1": 0.3636,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.7551,
+      "recall": 0.8222,
+      "f1": 0.7872,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      61,
+      5,
+      18
+     ],
+     [
+      9,
+      6,
+      6
+     ],
+     [
+      15,
+      1,
+      74
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.35,
+      "confidence": 0.3778,
+      "accuracy": 0.0,
+      "count": 2
+     },
+     {
+      "bin": 0.45,
+      "confidence": 0.4434,
+      "accuracy": 0.4762,
+      "count": 21
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5566,
+      "accuracy": 0.5,
+      "count": 38
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6441,
+      "accuracy": 0.7,
+      "count": 30
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7441,
+      "accuracy": 0.7353,
+      "count": 34
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8588,
+      "accuracy": 0.8824,
+      "count": 34
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9814,
+      "accuracy": 1.0,
+      "count": 36
+     }
+    ],
+    "inference_ms_per_1000": 65.58
+   },
+   {
+    "model": "LSA Embedding + MLP (DNN)",
+    "category": "Individual",
+    "vectorizer": "LSA semantic embedding",
+    "algorithm": "Multilayer Perceptron (DNN)",
+    "family": "Neural network",
+    "cv_macro_f1": 0.84237,
+    "cv_macro_f1_std": 0.02351,
+    "train_seconds": 5.86,
+    "accuracy": 0.87179,
+    "macro_precision": 0.81989,
+    "macro_recall": 0.82011,
+    "macro_f1": 0.81998,
+    "macro_f1_ci95": [
+     0.7437,
+     0.8852
+    ],
+    "weighted_f1": 0.87178,
+    "roc_auc_ovr": 0.97111,
+    "log_loss": 0.42411,
+    "brier": 0.19271,
+    "ece": 0.08245,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.8941,
+      "recall": 0.9048,
+      "f1": 0.8994,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "f1": 0.6667,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.8989,
+      "recall": 0.8889,
+      "f1": 0.8939,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      76,
+      5,
+      3
+     ],
+     [
+      1,
+      14,
+      6
+     ],
+     [
+      8,
+      2,
+      80
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5593,
+      "accuracy": 0.4286,
+      "count": 7
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6763,
+      "accuracy": 0.3333,
+      "count": 6
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.743,
+      "accuracy": 0.5,
+      "count": 8
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8733,
+      "accuracy": 0.5,
+      "count": 4
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9922,
+      "accuracy": 0.9353,
+      "count": 170
+     }
+    ],
+    "inference_ms_per_1000": 53.94
+   },
+   {
+    "model": "Hybrid: Majority Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "majority",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.97242,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.96923,
+    "macro_precision": 0.9771,
+    "macro_recall": 0.96534,
+    "macro_f1": 0.97089,
+    "macro_f1_ci95": [
+     0.9407,
+     0.9924
+    ],
+    "weighted_f1": 0.96922,
+    "roc_auc_ovr": 0.99722,
+    "log_loss": 0.13929,
+    "brier": 0.05241,
+    "ece": 0.01702,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 0.9524,
+      "f1": 0.9756,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9773,
+      "recall": 0.9556,
+      "f1": 0.9663,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      20,
+      1
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.65,
+      "confidence": 0.6667,
+      "accuracy": 0.75,
+      "count": 16
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9999,
+      "accuracy": 0.9888,
+      "count": 179
+     }
+    ],
+    "inference_ms_per_1000": 286.32
+   },
+   {
+    "model": "Hybrid: Competitive Voting (Thesis, Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "competitive",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.97242,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.96923,
+    "macro_precision": 0.9771,
+    "macro_recall": 0.96534,
+    "macro_f1": 0.97089,
+    "macro_f1_ci95": [
+     0.9407,
+     0.9924
+    ],
+    "weighted_f1": 0.96922,
+    "roc_auc_ovr": 0.99707,
+    "log_loss": 0.10729,
+    "brier": 0.05256,
+    "ece": 0.01343,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 0.9524,
+      "f1": 0.9756,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9773,
+      "recall": 0.9556,
+      "f1": 0.9663,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      20,
+      1
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.75,
+      "confidence": 0.7783,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8519,
+      "accuracy": 0.6667,
+      "count": 3
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9723,
+      "accuracy": 0.9791,
+      "count": 191
+     }
+    ],
+    "inference_ms_per_1000": 320.23
+   },
+   {
+    "model": "Hybrid: Confidence-Weighted Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "confidence",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.97242,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.96923,
+    "macro_precision": 0.9771,
+    "macro_recall": 0.96534,
+    "macro_f1": 0.97089,
+    "macro_f1_ci95": [
+     0.9407,
+     0.9924
+    ],
+    "weighted_f1": 0.96922,
+    "roc_auc_ovr": 0.99655,
+    "log_loss": 0.19232,
+    "brier": 0.0471,
+    "ece": 0.01742,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 0.9524,
+      "f1": 0.9756,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9773,
+      "recall": 0.9556,
+      "f1": 0.9663,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      20,
+      1
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5775,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.629,
+      "accuracy": 0.5,
+      "count": 2
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7872,
+      "accuracy": 0.8571,
+      "count": 7
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8212,
+      "accuracy": 0.8333,
+      "count": 6
+     },
+     {
+      "bin": 0.95,
+      "confidence": 1.0,
+      "accuracy": 0.9888,
+      "count": 179
+     }
+    ],
+    "inference_ms_per_1000": 286.62
+   },
+   {
+    "model": "Hybrid: Rank-Weighted Vote (Top-3)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "weighted",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest"
+    ],
+    "weights": [
+     3,
+     2,
+     1
+    ],
+    "cv_macro_f1": 0.97203,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.97436,
+    "macro_precision": 0.98074,
+    "macro_recall": 0.98095,
+    "macro_f1": 0.98083,
+    "macro_f1_ci95": [
+     0.9623,
+     0.9962
+    ],
+    "weighted_f1": 0.97436,
+    "roc_auc_ovr": 0.99713,
+    "log_loss": 0.10413,
+    "brier": 0.04604,
+    "ece": 0.02204,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9647,
+      "recall": 0.9762,
+      "f1": 0.9704,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9775,
+      "recall": 0.9667,
+      "f1": 0.9721,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      82,
+      0,
+      2
+     ],
+     [
+      0,
+      21,
+      0
+     ],
+     [
+      3,
+      0,
+      87
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5278,
+      "accuracy": 0.6667,
+      "count": 3
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7766,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8831,
+      "accuracy": 0.9,
+      "count": 10
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9641,
+      "accuracy": 0.9834,
+      "count": 181
+     }
+    ],
+    "inference_ms_per_1000": 286.17
+   },
+   {
+    "model": "Hybrid: Optimized Soft Voting (Top-5)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "weighted",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest",
+     "BoW + Logistic Regression",
+     "TF-IDF + Ridge Classifier"
+    ],
+    "weights": [
+     0.3242860216013576,
+     0.18104397784090204,
+     0.29893508189546003,
+     0.02072946348469804,
+     0.1750054551775823
+    ],
+    "cv_macro_f1": 0.97715,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.97436,
+    "macro_precision": 0.98084,
+    "macro_recall": 0.98122,
+    "macro_f1": 0.98084,
+    "macro_f1_ci95": [
+     0.9619,
+     0.9961
+    ],
+    "weighted_f1": 0.97437,
+    "roc_auc_ovr": 0.99847,
+    "log_loss": 0.15954,
+    "brier": 0.06039,
+    "ece": 0.10509,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9885,
+      "recall": 0.9556,
+      "f1": 0.9718,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      21,
+      0
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.45,
+      "confidence": 0.4846,
+      "accuracy": 1.0,
+      "count": 1
+     },
+     {
+      "bin": 0.55,
+      "confidence": 0.5764,
+      "accuracy": 0.3333,
+      "count": 3
+     },
+     {
+      "bin": 0.65,
+      "confidence": 0.6613,
+      "accuracy": 0.875,
+      "count": 8
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7578,
+      "accuracy": 0.9259,
+      "count": 27
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8566,
+      "accuracy": 1.0,
+      "count": 49
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9442,
+      "accuracy": 1.0,
+      "count": 107
+     }
+    ],
+    "inference_ms_per_1000": 384.09
+   },
+   {
+    "model": "Hybrid: Stacking Meta-Learner (All models)",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "stacking",
+    "family": "Hybrid",
+    "members": "all 20 models",
+    "weights": null,
+    "cv_macro_f1": 0.96789,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.97436,
+    "macro_precision": 0.98084,
+    "macro_recall": 0.98122,
+    "macro_f1": 0.98084,
+    "macro_f1_ci95": [
+     0.9619,
+     0.9961
+    ],
+    "weighted_f1": 0.97437,
+    "roc_auc_ovr": 0.99801,
+    "log_loss": 0.08729,
+    "brier": 0.04404,
+    "ece": 0.01342,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.954,
+      "recall": 0.9881,
+      "f1": 0.9708,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9885,
+      "recall": 0.9556,
+      "f1": 0.9718,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      21,
+      0
+     ],
+     [
+      4,
+      0,
+      86
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.65,
+      "confidence": 0.675,
+      "accuracy": 0.5,
+      "count": 2
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8552,
+      "accuracy": 1.0,
+      "count": 4
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.9878,
+      "accuracy": 0.9788,
+      "count": 189
+     }
+    ],
+    "inference_ms_per_1000": 2075.24
+   },
+   {
+    "model": "Hybrid: ML + Rule-Based Stacking",
+    "category": "Hybrid",
+    "vectorizer": "\u2014",
+    "algorithm": "rule_stacking",
+    "family": "Hybrid",
+    "members": [
+     "BoW + Decision Tree",
+     "TF-IDF + Decision Tree",
+     "TF-IDF + Random Forest",
+     "BoW + Logistic Regression",
+     "TF-IDF + Ridge Classifier"
+    ],
+    "weights": null,
+    "cv_macro_f1": 0.97259,
+    "cv_macro_f1_std": null,
+    "accuracy": 0.97949,
+    "macro_precision": 0.98458,
+    "macro_recall": 0.98492,
+    "macro_f1": 0.98467,
+    "macro_f1_ci95": [
+     0.9687,
+     1.0
+    ],
+    "weighted_f1": 0.97949,
+    "roc_auc_ovr": 0.99943,
+    "log_loss": 0.05405,
+    "brier": 0.0287,
+    "ece": 0.01092,
+    "per_class": {
+     "Contractor": {
+      "precision": 0.9651,
+      "recall": 0.9881,
+      "f1": 0.9765,
+      "support": 84
+     },
+     "Employer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 21
+     },
+     "Shared": {
+      "precision": 0.9886,
+      "recall": 0.9667,
+      "f1": 0.9775,
+      "support": 90
+     }
+    },
+    "confusion_matrix": [
+     [
+      83,
+      0,
+      1
+     ],
+     [
+      0,
+      21,
+      0
+     ],
+     [
+      3,
+      0,
+      87
+     ]
+    ],
+    "calibration_curve": [
+     {
+      "bin": 0.55,
+      "confidence": 0.5891,
+      "accuracy": 0.0,
+      "count": 1
+     },
+     {
+      "bin": 0.75,
+      "confidence": 0.7498,
+      "accuracy": 0.8,
+      "count": 5
+     },
+     {
+      "bin": 0.85,
+      "confidence": 0.8514,
+      "accuracy": 0.8,
+      "count": 5
+     },
+     {
+      "bin": 0.95,
+      "confidence": 0.989,
+      "accuracy": 0.9946,
+      "count": 184
+     }
+    ],
+    "inference_ms_per_1000": 544.45
+   }
+  ],
+  "y_test": [
+   2,
+   0,
+   0,
+   0,
+   2,
+   2,
+   1,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   0,
+   1,
+   0,
+   2,
+   0,
+   2,
+   0,
+   2,
+   0,
+   2,
+   0,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   0,
+   2,
+   2,
+   2,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0,
+   2,
+   2,
+   0,
+   0,
+   2,
+   0,
+   2,
+   2,
+   0,
+   2,
+   0,
+   2,
+   1,
+   0,
+   0,
+   2,
+   0,
+   0,
+   2,
+   2,
+   2,
+   2,
+   1,
+   0,
+   0,
+   2,
+   1,
+   0,
+   0,
+   0,
+   0,
+   2,
+   2,
+   2,
+   2,
+   0,
+   0,
+   2,
+   0,
+   0,
+   2,
+   2,
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   2,
+   2,
+   2,
+   0,
+   0,
+   2,
+   2,
+   0,
+   2,
+   0,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   0,
+   2,
+   0,
+   2,
+   2,
+   2,
+   0,
+   2,
+   0,
+   0,
+   2,
+   2,
+   0,
+   1,
+   1,
+   2,
+   0,
+   2,
+   1,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   2,
+   2,
+   1,
+   0,
+   2,
+   0,
+   0,
+   2,
+   2,
+   1,
+   0,
+   0,
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   0,
+   0,
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   2,
+   0,
+   0,
+   1,
+   0,
+   0,
+   2,
+   0,
+   2,
+   2,
+   0,
+   0,
+   0,
+   2,
+   2,
+   0,
+   1,
+   0,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1
+  ]
+ },
+ "hybrid_descriptions": {
+  "Hybrid: Majority Vote (Top-3)": "Each of the three best individual models (by cross-validated macro-F1) casts one vote; ties broken by summed probability.",
+  "Hybrid: Competitive Voting (Thesis, Top-3)": "Eken (2022) \u00a75.6: if \u22652 of the top-3 models agree, take the majority; if all three differ, take the prediction of the most accurate model.",
+  "Hybrid: Confidence-Weighted Vote (Top-3)": "Each top-3 model adds its confidence to the class it predicts; the class with the largest confidence mass wins.",
+  "Hybrid: Rank-Weighted Vote (Top-3)": "Top-3 models receive weights 3, 2, 1 by cross-validated rank; weighted soft vote of their probabilities.",
+  "Hybrid: Optimized Soft Voting (Top-5)": "Non-negative weights for the five best models chosen by Dirichlet search to maximise out-of-fold macro-F1.",
+  "Hybrid: Stacking Meta-Learner (All models)": "A multinomial logistic-regression meta-learner trained on the out-of-fold probabilities of every individual model.",
+  "Hybrid: ML + Rule-Based Stacking": "Stacking meta-learner fed with the top-5 models' probabilities plus 28 linguistic rule cues (modal verbs, liability, discretion, party mentions \u2026) \u2014 the rule integration recommended in thesis \u00a76.2.",
+  "Hybrid: Thesis Hierarchical Binary Decomposition": "Eken (2022) \u00a75.3 Step 2: Heading vs Clause \u2192 Definition vs Other \u2192 Obligation vs Other \u2192 Risk vs Right, each stage a soft vote of TF-IDF LR, TF-IDF SVM and char-SVM."
+ }
+}
