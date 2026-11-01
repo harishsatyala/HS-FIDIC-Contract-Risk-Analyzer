@@ -1,4 +1,4 @@
-# HS-FIDIC Contract Risk Analyzer (v4)
+# HS-FIDIC Contract Risk Analyzer (v6)
 
 Streamlit app that reads contract PDFs, classifies every clause with **20 individual ML models and 8 hybrid models**,
 turns the predictions into a **risk probability (%)**, a **risk score**, a **mitigation plan** and a
@@ -9,6 +9,25 @@ During Risk Assessment at the Bidding Stage*. PhD thesis, Middle East Technical 
 thesis taxonomy (Heading / Definition / Obligation / Risk / Right × Contractor / Employer / Shared), the thesis
 model grid (vectorizer × algorithm, Table 4.5), the Step-2 hierarchical binary decomposition (§5.3), Step-3
 competitive voting (§5.6) and the recommended rule-based integration (§6.2).
+
+## What's new in v6 — the labelled dataset as input
+
+- **📚 Labelled dataset panel (sidebar):** shows the active dataset (default `data/FIDIC_Thesis_Style_Labeled_Dataset.xlsx`)
+  and accepts an upload (.xlsx or .csv with Sentence, Sentence_Type, Related_Party; the `Combined_Unique` sheet is used when present).
+- **🔁 Retrain in the app:** one click rebuilds all 20 individual + 8 hybrid sentence-type models and 20 + 7 party models on
+  the uploaded dataset (3-fold CV, ≈3–8 min on Streamlit Cloud, cached), and every tab then uses them.
+- **Reference evidence:** every contract clause shows its closest labelled sentence (book, clause, labelled type and party,
+  similarity %, agrees/differs) in the Top 20 table, mitigation cards, clause explorer, predictability and the report.
+- **📚 Dataset tab:** cleaning waterfall, sentences by book and type, label distributions, searchable clean rows, CSV download.
+- Training logic moved to `src/training.py` (shared by the app and `scripts/train_models.py [dataset]`).
+
+## What's new in v5
+
+- **📑 Generate full report**: one self-contained HTML file (interactive charts, works offline) covering every tab —
+  executive summary, risk dashboard, mitigation plans, model execution, predictability, model performance (both tasks),
+  clause explorer, contract comparison and method — with explanations. Print it to PDF from the browser if needed.
+- Cosmetic fixes: chart legends moved away from the Plotly toolbar; heatmap title no longer overlaps column labels;
+  KPI sub-labels without arrows.
 
 ## What's new in v4
 

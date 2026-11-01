@@ -19,8 +19,18 @@ from src.model_zoo import HYBRID_INFO
 from src.predictor import ModelSuite
 from src.text_utils import extract_uploaded_file, segment_pages
 from src.report import build_report
+from src.training import read_dataset, load_clean_dataset, train_all
+from src.reference import ReferenceIndex
+import hashlib
 
 METHOD_MD = """
+**Labelled dataset (input).** The FIDIC thesis-style labelled workbook (sheet Combined_Unique: Sentence, Sentence_Type,
+Related_Party) is the training input of every model. It is cleaned (OCR and non-English rows, PDF line fragments,
+duplicates removed; strict title lines relabelled Heading) and split 80/20; models are cross-validated on the 80% and
+scored once on the 20%. A different or re-labelled dataset can be uploaded in the sidebar: the app then retrains all
+individual and hybrid models on it. The cleaned dataset is also indexed so every contract clause shows its closest
+labelled sentence as reference evidence.
+
 **Pipeline.** PDF text extraction → line re-joining, header/footer removal, sentence and heading segmentation with clause
 tracking → thesis preprocessing (lower-case, punctuation/digit/stop-word removal keeping modal verbs) → **sentence-type**
 and **related-party** classification by the selected individual or hybrid model → rule layer (onerous-term triggers)
@@ -62,6 +72,10 @@ deserves attention first.
 
 **Decision Strength %** — the selected model's probability for its predicted sentence type (Heading, Definition,
 Obligation, Risk, Right). It is **not** model accuracy; accuracy is in 🏆 Model performance.
+
+**Reference sentence / Similarity % / Dataset agreement** — the closest sentence in the labelled dataset (its book,
+clause, Sentence_Type and Related_Party) and its text similarity. "Agrees" = the labelled type equals the ML prediction
+for matches at or above 30% similarity; it is evidence for a reviewer and does not change the prediction.
 
 **Responsible Party** — allocation in the matched risk-library record. **Predicted Responsible Party** — what the
 ML party model reads in this clause (Contractor, Employer, Shared). **Party Confidence %** — that model's probability.
@@ -117,6 +131,28 @@ def get_category_model():
     return engine.CategoryModel(corpus)
 
 
+@st.cache_resource(show_spinner="Reading the labelled dataset…")
+def load_dataset(data: bytes, name: str):
+    """Labelled dataset → (raw rows, cleaned rows, cleaning audit, description)."""
+    raw, desc = read_dataset(data, name)
+    clean, audit = load_clean_dataset(raw)
+    audit["source"] = name
+    return raw, clean, audit, desc
+
+
+@st.cache_resource(show_spinner="Indexing labelled sentences for reference matching…")
+def get_reference(ds_key: str, _clean):
+    return ReferenceIndex(_clean)
+
+
+@st.cache_resource(show_spinner=False)
+def train_custom(data: bytes, name: str, _progress=None):
+    """Retrain all individual + hybrid models on an uploaded labelled dataset (3-fold CV to fit cloud limits)."""
+    raw, _ = read_dataset(data, name)
+    tb, pb, m = train_all(raw, folds=3, boot=200, progress=_progress, source=name)
+    return ModelSuite.from_bundles(tb, pb), m
+
+
 @st.cache_data
 def get_metrics():
     p = MODELS / "metrics.json"
@@ -125,17 +161,20 @@ def get_metrics():
 
 @st.cache_data(show_spinner=False, max_entries=32)
 def run_analysis(data: bytes, name: str, type_model: str, party_model: str, perspective: str,
-                 context: tuple, contract_value: float, review_threshold: float, mit_eff):
+                 context: tuple, contract_value: float, review_threshold: float, mit_eff,
+                 model_key: str, ds_key: str, _suite, _ref):
     pages, info = extract_uploaded_file(name, data)
     rows = segment_pages(pages)
     if not rows:
         return pd.DataFrame(), info, {}
-    suite = get_suite()
+    suite = _suite
     preds = suite.predict([r["sentence"] for r in rows], type_model, party_model)
     df = engine.analyse(rows, preds, suite, get_library(), get_category_model(), type_model=type_model,
                         party_model=party_model, perspective=perspective, context=dict(context),
                         contract_value=contract_value, review_threshold=review_threshold,
                         mitigation_effectiveness=mit_eff)
+    if _ref is not None:  # closest labelled-dataset sentence as evidence for every clause
+        df = pd.concat([df, _ref.match(df["Sentence"].tolist(), df["Sentence Type"].tolist())], axis=1)
     texts = [r["sentence"] for r in rows]
     votes = {"type": {k: v.tolist() for k, v in preds["type_all"].items()},
              "party": {k: v.tolist() for k, v in preds["party_all"].items()},
@@ -177,6 +216,62 @@ except Exception as exc:  # version mismatch or missing files
     st.stop()
 library = get_library()
 metrics = get_metrics()
+
+# ----------------------------------------------------------------------------- labelled dataset (input)
+with st.sidebar:
+    st.header("📚 Labelled dataset")
+    ds_up = st.file_uploader("Labelled risk dataset (.xlsx or .csv)", type=["xlsx", "xls", "csv"], key="dataset_upload",
+                             help="Same format as FIDIC_Thesis_Style_Labeled_Dataset.xlsx: columns Sentence, Sentence_Type "
+                                  "(Heading/Definition/Obligation/Risk/Right) and Related_Party (Contractor/Employer/Shared). "
+                                  "The 'Combined_Unique' sheet is used when present.")
+    if ds_up is not None:
+        ds_bytes, ds_name = ds_up.getvalue(), ds_up.name
+    elif DATASET_PATH.exists():
+        ds_bytes, ds_name = DATASET_PATH.read_bytes(), DATASET_PATH.name
+    else:
+        ds_bytes, ds_name = None, None
+    ds_raw = ds_clean = ds_audit = None
+    ds_desc = "no dataset"
+    ds_key = "none"
+    if ds_bytes is not None:
+        try:
+            ds_raw, ds_clean, ds_audit, ds_desc = load_dataset(ds_bytes, ds_name)
+            ds_key = hashlib.md5(ds_bytes).hexdigest()[:12]
+        except Exception as exc:
+            st.error(f"Could not read the dataset: {exc}")
+    bundled_key = hashlib.md5(DATASET_PATH.read_bytes()).hexdigest()[:12] if DATASET_PATH.exists() else ""
+    is_bundled = ds_key == bundled_key
+    if ds_audit:
+        st.caption(f"**Active:** {ds_desc}  \n{ds_audit['kept_rows']:,} clean rows after cleaning "
+                   f"({ds_audit['dropped_total']:,} removed). Used for reference matching and the 📚 Dataset tab.")
+    model_source = "bundled"
+    if ds_audit and is_bundled:
+        st.success("Models in use were trained on this dataset (5-fold CV).", icon="✅")
+    elif ds_audit:
+        trained = st.session_state.get("trained_on") == ds_key
+        if not trained:
+            st.warning("Models are still the bundled ones. Retrain to make this dataset drive the predictions.", icon="⚠️")
+            if st.button("🔁 Retrain all 28 models on this dataset", type="primary",
+                         help="Trains 20 individual + 8 hybrid sentence-type models and 20 + 7 party models with 3-fold "
+                              "cross-validation. Takes about 4–8 minutes on Streamlit Cloud; the result is cached."):
+                prog = st.progress(0.0, text="Training…")
+                try:
+                    train_custom(ds_bytes, ds_name, _progress=lambda f, msg: prog.progress(f, text=msg[:70]))
+                    st.session_state["trained_on"] = ds_key
+                    st.rerun()
+                except Exception as exc:
+                    prog.empty()
+                    st.error(f"Training failed: {exc}")
+        else:
+            model_source = "custom"
+            st.success(f"Models retrained on {ds_name} (3-fold CV).", icon="✅")
+            if st.button("Revert to bundled models"):
+                st.session_state.pop("trained_on", None)
+                st.rerun()
+    if model_source == "custom":
+        suite, metrics = train_custom(ds_bytes, ds_name)
+    model_key = f"{model_source}:{ds_key if model_source == 'custom' else 'bundled'}"
+    reference = get_reference(ds_key, ds_clean) if ds_clean is not None else None
 
 
 def model_label(name, task):
@@ -250,7 +345,7 @@ prog = st.progress(0.0, text="Analysing…")
 for i, (name, data) in enumerate(docs):
     try:
         df, info, votes = run_analysis(data, name, type_model, party_model, perspective, tuple(sorted(ctx.items())),
-                                       float(value), float(review_thr), mit_eff)
+                                       float(value), float(review_thr), mit_eff, model_key, ds_key, suite, reference)
     except Exception as exc:
         st.error(f"Could not process {name}: {exc}")
         continue
@@ -289,6 +384,7 @@ if rc1.button("📑 Generate full report", type="primary",
             settings=dict(type_model=type_model, party_model=party_model, perspective=perspective, min_prob=min_prob,
                           review_thr=review_thr, value=value, mit_pct=mit_pct, context=ctx),
             results=results, make_register=make_register, numbers_guide=NUMBERS_GUIDE, method_md=METHOD_MD,
+            dataset=dict(desc=ds_desc, audit=ds_audit, clean=ds_clean, model_source=model_source, is_bundled=is_bundled),
             currency=cur))
 if st.session_state.get("report") and st.session_state["report"][0] == sel:
     rc2.download_button("⬇️ Download report (HTML — open in browser, print to PDF)",
@@ -299,7 +395,7 @@ else:
                 "Model performance, Clause explorer, Compare contracts and Method — with explanations and all charts.")
 
 tabs = st.tabs(["📊 Risk dashboard", "🛡️ Mitigation plans", "🤖 Model execution", "🎯 Predictability",
-                "🏆 Model performance", "📄 Clause explorer", "⚖️ Compare contracts", "ℹ️ Method"])
+                "🏆 Model performance", "📚 Dataset", "📄 Clause explorer", "⚖️ Compare contracts", "ℹ️ Method"])
 
 # ============================================================================= 1 DASHBOARD
 
@@ -321,6 +417,9 @@ with tabs[0]:
     chart(g2, charts.gauge(summ["mean_probability"], "Mean risk probability of identified risks"))
     chart(g3, charts.gauge(summ["predictability"], "Prediction predictability",
                            bands=((0, 50, "#f8d7d7"), (50, 70, "#fff4d6"), (70, 100, "#e9f5e9"))))
+    st.caption(f"📚 Labelled dataset: **{ds_desc}** · models "
+               + ("trained on it in the app (3-fold CV)." if model_source == "custom" else
+                  ("trained on it (5-fold CV)." if is_bundled else "bundled (trained on FIDIC_Thesis_Style_Labeled_Dataset.xlsx).")))
     st.caption(f"All {len(votes['type'])} individual ML models and all {len(votes['type_hybrid'])} hybrid models were "
                f"executed automatically (see 🤖 Model execution). **{type_model}** — the hybrid selected by cross-validation — "
                "drives risk identification and prioritisation.")
@@ -356,11 +455,14 @@ with tabs[0]:
                 "Probability Factor", "Mitigation Effectiveness %", "Gross Exposure", "EMV", "Residual EMV",
                 "Risk Owner", "Early Warning Indicators", "Mitigation", "Library Mitigation", "Triggers",
                 "FIDIC Reference", "Predictability %", "Needs Review"]
+        cols += [c for c in ["Reference Sentence", "Reference Book", "Reference Clause", "Reference Type", "Reference Party",
+                             "Similarity %", "Dataset Agreement"] if c in reg.columns]
         top = reg.head(n_top)[cols].rename(columns={
             "Sentence": "Contract Sentence", "Library Risk ID": "Risk ID", "Type Confidence %": "Decision Strength %",
             "Responsible Party (library)": "Responsible Party", "Related Party": "Predicted Responsible Party",
             "Probability (L/M/H)": "Probability", "Impact Areas": "Impact", "Mitigation": "Recommended Mitigation",
-            "Library Mitigation": "Mitigation Actions (library)"})
+            "Library Mitigation": "Mitigation Actions (library)", "Reference Sentence": "Closest Labelled Sentence",
+            "Reference Type": "Labelled Type", "Reference Party": "Labelled Party"})
         top["Rating"] = top["Rating"].map(lambda r: f"{ICON[r]} {r}")
         table(st, top, hide_index=True, height=620,
               column_config={"Risk Score %": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f"),
@@ -428,6 +530,11 @@ with tabs[1]:
                     st.markdown(f"**Risk owner:** {r['Risk Owner']}")
                     st.markdown(f"**Early-warning indicators:** {r['Early Warning Indicators']}")
                     st.caption(f"Library mitigation: {r['Library Mitigation']}")
+                    if "Reference Sentence" in r.index:
+                        st.markdown(f"**Labelled dataset evidence:** {r['Dataset Agreement']} · closest labelled sentence "
+                                    f"({r['Reference Book']} {r['Reference Clause']}) is *{r['Reference Type']}* / "
+                                    f"*{r['Reference Party'] or '—'}*, similarity {r['Similarity %']:.0f}%")
+                        st.caption(f"“{str(r['Reference Sentence'])[:260]}”")
                     st.caption(f"Sentence type {r['Sentence Type']} · party {r['Related Party']} · "
                                f"P(Risk) {r['P(Risk) %']:.0f}% · rule signal {r['Rule Signal %']:.0f}% · "
                                f"model agreement {r['Model Agreement %']:.0f}%")
@@ -518,7 +625,11 @@ with tabs[3]:
                "+ 25% confidence + 15% (1 − normalised entropy) + 25% historical precision of the selected model for that "
                "class on the held-out test set.")
     clauses = df[~df["Sentence Type"].isin(["Heading"])]
-    k = st.columns(4)
+    k = st.columns(5)
+    if "Dataset Agreement" in clauses:
+        close = clauses[clauses["Dataset Agreement"] != "No close match"]
+        k[4].metric("Agrees with labelled dataset", f"{(close['Dataset Agreement'] == 'Agrees').mean():.0%}" if len(close) else "—",
+                    help="Share of clauses with a ≥30% similar labelled sentence whose labelled type equals the prediction.")
     k[0].metric("Mean predictability (all clauses)", f"{clauses['Predictability %'].mean():.0f}%")
     k[1].metric("Mean model agreement", f"{clauses['Model Agreement %'].mean():.0f}%")
     k[2].metric("Clauses needing review", int(clauses["Needs Review"].sum()))
@@ -633,8 +744,58 @@ with tabs[4]:
                 st.caption("⚠️ " + c)
             st.json(metrics.get("data_audit", {}))
 
-# ============================================================================= 5 CLAUSE EXPLORER
+# ============================================================================= 4b DATASET
 with tabs[5]:
+    st.subheader("📚 Labelled dataset — the input every model learns from")
+    if ds_audit is None:
+        st.warning("No labelled dataset found. Upload one in the sidebar.")
+    else:
+        st.caption(f"Active dataset: **{ds_desc}**. " + (
+            "All 28 sentence-type models and 27 party models in use were trained on it." if (is_bundled or model_source == "custom")
+            else "It feeds reference matching and this tab; press **Retrain** in the sidebar to train the models on it."))
+        k = st.columns(5)
+        k[0].metric("Rows in file", f"{ds_audit['raw_rows']:,}")
+        k[1].metric("Clean training rows", f"{ds_audit['kept_rows']:,}")
+        k[2].metric("Removed in cleaning", f"{ds_audit['dropped_total']:,}")
+        k[3].metric("Relabelled as Heading", f"{ds_audit.get('relabelled_as_heading', 0):,}")
+        k[4].metric("Books / sources", f"{ds_clean['Book'].nunique()}")
+        a, b = st.columns(2)
+        chart(a, charts.cleaning_funnel(ds_audit, "From raw workbook rows to clean training rows"))
+        chart(b, charts.dataset_by_book(ds_clean, "Clean sentences by book and sentence type"))
+        a, b = st.columns(2)
+        chart(a, charts.dataset_counts(ds_clean["Sentence_Type"].value_counts(), "Sentence-type labels (clean)",
+                                       colors=charts.TYPE_COLORS))
+        chart(b, charts.dataset_counts(ds_clean["Related_Party"].dropna().value_counts(), "Related-party labels (clean)",
+                                       colors=charts.PARTY_COLORS))
+        with st.expander("How the dataset is used and cleaned", expanded=False):
+            st.markdown("""
+1. **Training input** — Sentence → Sentence_Type trains the 20 individual + 8 hybrid sentence-type models; Obligation /
+   Risk / Right rows with a Related_Party train the 20 + 7 party models (80/20 split, cross-validated, scored once).
+2. **Cleaning** — English rows with ≥80% valid vocabulary; PDF line fragments removed; strict title lines relabelled
+   Heading; duplicate sentences merged by majority label.
+3. **Reference matching** — the clean rows are indexed (TF-IDF); every contract clause shows its closest labelled
+   sentence, its labels and similarity in the dashboard, mitigation cards and clause explorer.
+4. **Your own dataset** — upload a workbook with the same columns in the sidebar and press Retrain: every model is
+   rebuilt on it and the Model performance tab shows the new scores.""")
+        st.markdown("#### Browse the clean labelled sentences")
+        f1, f2, f3 = st.columns(3)
+        tsel = f1.multiselect("Sentence type", sorted(ds_clean["Sentence_Type"].unique()), key="ds_t")
+        psel = f2.multiselect("Related party", sorted(ds_clean["Related_Party"].dropna().unique()), key="ds_p")
+        dq = f3.text_input("Search", key="ds_q")
+        view = ds_clean[["Book", "Clause", "Sentence", "Sentence_Type", "Related_Party"]]
+        if tsel:
+            view = view[view["Sentence_Type"].isin(tsel)]
+        if psel:
+            view = view[view["Related_Party"].isin(psel)]
+        if dq:
+            view = view[view["Sentence"].str.contains(dq, case=False, regex=False)]
+        table(st, view, hide_index=True, height=420,
+              column_config={"Sentence": st.column_config.TextColumn(width="large")})
+        st.download_button("⬇️ Download clean dataset (CSV)", ds_clean.drop(columns=["norm"], errors="ignore")
+                           .to_csv(index=False).encode("utf-8-sig"), "clean_labelled_dataset.csv", "text/csv")
+
+# ============================================================================= 5 CLAUSE EXPLORER
+with tabs[6]:
     st.subheader("Every sentence, every prediction")
     f1, f2, f3 = st.columns(3)
     t_f = f1.multiselect("Sentence type", suite.type.labels, default=["Obligation", "Risk", "Right"])
@@ -661,7 +822,7 @@ with tabs[5]:
                        f"{Path(sel).stem}_risks.json", "application/json")
 
 # ============================================================================= 6 COMPARE
-with tabs[6]:
+with tabs[7]:
     st.subheader("Contract comparison")
     rows = []
     for n, (d, _, _) in results.items():
@@ -683,7 +844,7 @@ with tabs[6]:
         table(st, piv.round(0))
 
 # ============================================================================= 7 METHOD
-with tabs[7]:
+with tabs[8]:
     st.subheader("Method")
     st.markdown(METHOD_MD)
 
