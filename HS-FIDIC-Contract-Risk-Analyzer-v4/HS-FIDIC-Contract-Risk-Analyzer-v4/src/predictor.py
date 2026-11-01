@@ -71,12 +71,17 @@ class TaskModels:
 
 
 class ModelSuite:
-    def __init__(self, models_dir: str | Path):
-        models_dir = Path(models_dir)
-        t = joblib.load(models_dir / "hs_fidic_type_models.joblib")
-        p = joblib.load(models_dir / "hs_fidic_party_models.joblib")
-        self.type = TaskModels(t["type"])
-        self.party = TaskModels(p["party"])
+    def __init__(self, models_dir: str | Path | None = None, type_bundle=None, party_bundle=None):
+        if type_bundle is None:
+            models_dir = Path(models_dir)
+            type_bundle = joblib.load(models_dir / "hs_fidic_type_models.joblib")
+            party_bundle = joblib.load(models_dir / "hs_fidic_party_models.joblib")
+        self.type = TaskModels(type_bundle["type"])
+        self.party = TaskModels(party_bundle["party"])
+
+    @classmethod
+    def from_bundles(cls, type_bundle, party_bundle):
+        return cls(type_bundle=type_bundle, party_bundle=party_bundle)
 
     def predict(self, texts, type_model: str, party_model: str):
         texts = list(texts)

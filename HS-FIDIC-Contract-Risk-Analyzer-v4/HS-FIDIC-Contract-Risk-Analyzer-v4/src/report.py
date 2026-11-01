@@ -102,6 +102,14 @@ class _Builder:
                 f"<style>{CSS}</style></head><body><div class='wrap'>" + "\n".join(self.parts) + "</div></body></html>")
 
 
+def _evidence(r):
+    if "Reference Sentence" not in r.index:
+        return ""
+    return (f"<br><b>Labelled dataset evidence:</b> {_esc(r['Dataset Agreement'])} · closest labelled sentence "
+            f"({_esc(r['Reference Book'])} {_esc(r['Reference Clause'])}) is {_esc(r['Reference Type'])} / "
+            f"{_esc(r['Reference Party'] or '—')}, similarity {r['Similarity %']:.0f}%: <i>{_esc(str(r['Reference Sentence'])[:220])}</i>")
+
+
 def _esc(x):
     return html.escape(str(x))
 
@@ -123,7 +131,7 @@ def model_status(prob_dict, labs, sel_idx, n, accuracy, describe):
 
 
 def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, results, make_register,
-                 numbers_guide, method_md, currency="EUR") -> str:
+                 numbers_guide, method_md, currency="EUR", dataset=None) -> str:
     b = _Builder()
     now = dt.datetime.now().strftime("%d %B %Y, %H:%M")
     type_model, party_model = settings["type_model"], settings["party_model"]
@@ -138,10 +146,15 @@ def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, r
         f"related-party model <b>{_esc(party_model)}</b> · risk threshold {settings['min_prob']}% · "
         f"review threshold {settings['review_thr']}% · TCV {money(settings['value'])} · mitigation effectiveness "
         f"{settings['mit_pct']}% · context: {_esc(', '.join(f'{k}={v}' for k, v in settings['context'].items()))}", "sub")
+    if dataset and dataset.get("audit"):
+        src = ("retrained in the app on it (3-fold CV)" if dataset["model_source"] == "custom" else
+               "trained on it (5-fold CV)" if dataset["is_bundled"] else "bundled")
+        b.p(f"Labelled dataset: <b>{_esc(dataset['desc'])}</b> · {dataset['audit']['kept_rows']:,} clean rows · models {src}", "sub")
     b.add('<ol class="toc">' + "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in [
         ("summary", "Executive summary"), ("dashboard", "Risk dashboard"), ("mitigation", "Mitigation plans"),
         ("execution", "Model execution"), ("predictability", "Predictability"), ("performance", "Model performance"),
-        ("clauses", "Clause explorer"), ("compare", "Compare contracts"), ("method", "Method")]) + "</ol>")
+        ("dataset", "Labelled dataset"), ("clauses", "Clause explorer"), ("compare", "Compare contracts"),
+        ("method", "Method")]) + "</ol>")
 
     # ------------------------------------------------------------------ 0 executive summary
     b.h(2, "1. Executive summary", "summary")
@@ -218,7 +231,7 @@ def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, r
             <p class="sub"><b>Triggers:</b> {_esc(r['Triggers'] or '—')} · <b>FIDIC orientation:</b> {_esc(r['FIDIC Reference'])}<br>
             <b>Library match:</b> {_esc(r['Library Risk ID'])} ({_esc(r['Probability (L/M/H)'])}, factor {_esc(r['Probability Factor'])})
             · <b>Owner:</b> {_esc(r['Risk Owner'])}<br><b>Early-warning indicators:</b> {_esc(r['Early Warning Indicators'])}<br>
-            <b>Library mitigation:</b> {_esc(r['Library Mitigation'])}</p></div>""")
+            <b>Library mitigation:</b> {_esc(r['Library Mitigation'])}{_evidence(r)}</p></div>""")
     else:
         b.p("No registered risks at the current threshold.")
 
@@ -291,8 +304,29 @@ def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, r
         b.table(pf)
     b.warn("<br>".join(_esc(c) for c in metrics.get("caveats", [])))
 
+    # ------------------------------------------------------------------ dataset
+    b.h(2, "7. Labelled dataset", "dataset")
+    if dataset and dataset.get("audit"):
+        a, clean = dataset["audit"], dataset["clean"]
+        b.p(f"The labelled dataset <b>{_esc(dataset['desc'])}</b> is the training input of every model and the source of the "
+            f"reference evidence shown for each clause. Cleaning kept <b>{a['kept_rows']:,}</b> of {a['raw_rows']:,} rows "
+            f"({a.get('dropped_line_fragments', 0):,} line fragments and {a['dropped_total'] - a.get('dropped_line_fragments', 0):,} "
+            f"OCR, non-English or duplicate rows removed; {a.get('relabelled_as_heading', 0):,} title lines relabelled Heading).")
+        b.figs(charts.cleaning_funnel(a, "From raw workbook rows to clean training rows"),
+               charts.dataset_by_book(clean, "Clean sentences by book and sentence type"))
+        b.figs(charts.dataset_counts(clean["Sentence_Type"].value_counts(), "Sentence-type labels (clean)", colors=charts.TYPE_COLORS),
+               charts.dataset_counts(clean["Related_Party"].dropna().value_counts(), "Related-party labels (clean)",
+                                     colors=charts.PARTY_COLORS))
+        if "Dataset Agreement" in df:
+            close = df[(df["Dataset Agreement"] != "No close match") & (df["Sentence Type"] != "Heading")]
+            if len(close):
+                b.p(f"For this contract, {len(close)} clauses have a labelled sentence at least 30% similar; the labelled type "
+                    f"agrees with the ML prediction for <b>{(close['Dataset Agreement'] == 'Agrees').mean():.0%}</b> of them.")
+    else:
+        b.p("No labelled dataset was available.")
+
     # ------------------------------------------------------------------ 6 clause explorer
-    b.h(2, "7. Clause explorer", "clauses")
+    b.h(2, "8. Clause explorer", "clauses")
     tc = df["Sentence Type"].value_counts().reindex(labs, fill_value=0)
     pc = df.loc[df["Related Party"] != "—", "Related Party"].value_counts()
     b.p(f"Sentence types: {', '.join(f'{k} {v}' for k, v in tc.items())}. Related parties (obligations, risks, rights): "
@@ -303,7 +337,7 @@ def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, r
             .sort_values("Risk Probability %", ascending=False), max_rows=400)
 
     # ------------------------------------------------------------------ 7 compare
-    b.h(2, "8. Compare contracts", "compare")
+    b.h(2, "9. Compare contracts", "compare")
     rows = []
     for n, (d, _, _) in results.items():
         rg = make_register(d)
@@ -325,7 +359,7 @@ def build_report(*, sel, df, reg, summ, info, votes, suite, metrics, settings, r
         b.table(comp, fmt={"EMV": "{:,.0f}", "Residual EMV": "{:,.0f}"})
 
     # ------------------------------------------------------------------ 8 method
-    b.h(2, "9. Method", "method")
+    b.h(2, "10. Method", "method")
     b.add(_md(method_md))
     b.p("HS-FIDIC research prototype · decision support only, not legal advice · thesis basis: Eken (2022), METU.", "sub")
     return b.html(f"HS-FIDIC report — {sel}")

@@ -337,3 +337,40 @@ def perf_scatter(pf: pd.DataFrame, title):
                      color_discrete_map={"Individual": SERIES[0], "Hybrid": SERIES[1]}, title=title)
     fig.update_traces(marker=dict(size=12, line=dict(color="white", width=2)))
     return _style(fig, 380).update_xaxes(title="Accuracy (%)").update_yaxes(title="Macro-F1 (%)")
+
+
+TYPE_COLORS = {"Obligation": SERIES[0], "Risk": SERIES[1], "Right": SERIES[2], "Definition": SERIES[3], "Heading": SERIES[4]}
+
+
+def dataset_counts(counts: pd.Series, title: str, colors=None, axis="Sentences"):
+    d = counts.reset_index()
+    d.columns = ["Label", "Count"]
+    fig = go.Figure(go.Bar(x=d["Label"].astype(str), y=d["Count"],
+                           marker_color=[(colors or {}).get(str(l), SERIES[0]) for l in d["Label"]],
+                           marker_line_color="white", marker_line_width=2, text=d["Count"], textposition="outside",
+                           cliponaxis=False, hovertemplate="%{x}: %{y} sentences<extra></extra>"))
+    fig.update_yaxes(title=axis)
+    return _style(fig, 320, legend=False).update_layout(title=title)
+
+
+def dataset_by_book(clean: pd.DataFrame, title: str):
+    d = clean.groupby(["Book", "Sentence_Type"]).size().reset_index(name="Sentences")
+    fig = px.bar(d, x="Book", y="Sentences", color="Sentence_Type", color_discrete_map=TYPE_COLORS,
+                 category_orders={"Sentence_Type": list(TYPE_COLORS)}, title=title)
+    fig.update_traces(marker_line_color="white", marker_line_width=1.5,
+                      hovertemplate="%{x}<br>%{fullData.name}: %{y}<extra></extra>")
+    return _style(fig, 340).update_layout(barmode="stack")
+
+
+def cleaning_funnel(audit: dict, title: str):
+    raw, kept = audit["raw_rows"], audit["kept_rows"]
+    frag, other = audit.get("dropped_line_fragments", 0), audit["dropped_total"] - audit.get("dropped_line_fragments", 0)
+    steps = [("Raw rows", raw), ("OCR / non-English / duplicates removed", -other), ("Line fragments removed", -frag),
+             ("Clean training rows", kept)]
+    fig = go.Figure(go.Waterfall(x=[s[0] for s in steps], y=[s[1] for s in steps],
+                                 measure=["absolute", "relative", "relative", "total"],
+                                 decreasing=dict(marker=dict(color="#e34948")), totals=dict(marker=dict(color=SERIES[0])),
+                                 increasing=dict(marker=dict(color=SERIES[0])), text=[f"{abs(s[1]):,}" for s in steps],
+                                 textposition="outside", cliponaxis=False, connector=dict(line=dict(color=GRID))))
+    fig.update_yaxes(title="Rows")
+    return _style(fig, 340, legend=False).update_layout(title=title)
