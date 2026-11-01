@@ -69,3 +69,29 @@ def test_end_to_end_sample_contract():
     for name in suite.type.model_names:
         P, _ = suite.type.proba(name, [r["sentence"] for r in rows[:8]])
         assert np.allclose(P.sum(1), 1, atol=1e-6)
+
+
+def test_read_dataset_accepts_workbook_and_csv_aliases():
+    import pandas as pd
+    from src.training import read_dataset, load_clean_dataset
+
+    raw, desc = read_dataset((ROOT / "data" / "FIDIC_Thesis_Style_Labeled_Dataset.xlsx").read_bytes(), "x.xlsx")
+    assert "Combined_Unique" in desc and len(raw) == 3345
+    clean, audit = load_clean_dataset(raw)
+    assert audit["kept_rows"] > 1000 and set(clean["Sentence_Type"]) == {"Definition", "Heading", "Obligation", "Right", "Risk"}
+    csv = pd.DataFrame({"sentence": ["The Contractor shall pay delay damages to the Employer."],
+                        "Sentence Type": ["risk"], "Party": ["contractor"]}).to_csv(index=False).encode()
+    d, _ = read_dataset(csv, "mine.csv")
+    assert list(d.loc[0, ["Sentence_Type", "Related_Party"]]) == ["Risk", "Contractor"]
+
+
+def test_reference_matching_returns_labelled_evidence():
+    from src.training import read_dataset, load_clean_dataset
+    from src.reference import ReferenceIndex
+
+    raw, _ = read_dataset((ROOT / "data" / "FIDIC_Thesis_Style_Labeled_Dataset.xlsx").read_bytes(), "x.xlsx")
+    clean, _ = load_clean_dataset(raw)
+    r = ReferenceIndex(clean).match(["If the Contractor fails to comply with the Time for Completion, the Contractor "
+                                     "shall pay delay damages to the Employer."], ["Risk"])
+    assert r.loc[0, "Reference Type"] in {"Risk", "Obligation", "Right", "Definition"}
+    assert r.loc[0, "Similarity %"] > 30 and r.loc[0, "Dataset Agreement"] in {"Agrees", "Differs"}
